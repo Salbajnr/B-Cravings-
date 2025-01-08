@@ -459,4 +459,27 @@ footer .last_links a {
   background: 0;
   outline: 0;
   padding: 0.6rem 0;
+}
+
+.food_category {
+  margin-top: 8rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+}
+.food_category .f_cat {
+  text-align: center;
+}
+.food_category .f_cat .imgf {
+  background-color: #fff3da;
+  border-radius: 50%;
+  overflow: hidden;
+  padding: 0.3rem;
+}
+.food_category .f_cat .imgf img {
+  width: 50px;
+}
+.food_category .f_cat p {
+  font-size: clamp(0.7rem, 1.1vh, 1rem);
 }/*# sourceMappingURL=glovo.css.map */

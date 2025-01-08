@@ -46,3 +46,26 @@
 		}
 	}
 }
+
+.food_category {
+	margin-top: 8rem;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0.5rem 1rem;
+	.f_cat {
+		text-align: center;
+		.imgf {
+			background-color: #fff3da;
+			border-radius: 50%;
+			overflow: hidden;
+			padding: 0.3rem;
+			img {
+				width: 50px;
+			}
+		}
+		p {
+			font-size: clamp(0.7rem, 1.1vh, 1rem);
+		}
+	}
+}
