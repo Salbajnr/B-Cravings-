@@ -89,7 +89,6 @@ header a {
   background: white;
   border-radius: 20px;
   margin-top: -1rem;
-  height: 100vh;
   position: relative;
   padding-left: 1rem;
   padding: 0 1rem;
@@ -127,12 +126,13 @@ header a {
 }
 .stores .store_container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 0.5rem;
 }
 .stores .store_container .store_item {
+  height: 9rem;
+  width: 9rem;
   border-radius: 5px;
-  padding: 0;
   background-color: red;
 }
 .stores .store_container .store_item .store_img {
@@ -142,9 +142,105 @@ header a {
 .stores .store_container .store_item .store_img img {
   width: 100%;
   height: 100%;
+  display: block;
+  -o-object-fit: cover;
+     object-fit: cover;
+  margin: auto;
   border-radius: 5px;
 }
 
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+.card:hover {
+  transform: translateY(-4px);
+}
+.card__image {
+  position: relative;
+  width: 100%;
+  padding-top: 75%;
+  overflow: hidden;
+}
+.card__image img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+  transition: transform 0.3s ease;
+}
+.card__image:hover img {
+  transform: scale(1.05);
+}
+.card__tag {
+  position: absolute;
+  padding: 4px 8px;
+  border-radius: 6px;
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 500;
+  top: 1rem;
+  left: 1rem;
+  background-color: rgba(0, 0, 0, 0.6);
+}
+.card__discount {
+  position: absolute;
+  padding: 4px 8px;
+  border-radius: 6px;
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 500;
+  top: 1rem;
+  right: 1rem;
+  background-color: #ff3838;
+}
+.card__content {
+  padding: 1rem;
+}
+.card__title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+.card__rating {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  color: #2ecc71;
+}
+.card__rating svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+}
+.card__rating span {
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+  .card-grid {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1rem;
+  }
+}
 .top_category {
   text-align: center;
 }
