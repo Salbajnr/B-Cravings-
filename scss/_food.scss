@@ -1,0 +1,48 @@
+.food_header {
+	background-color: white;
+	.logo2 {
+		display: flex;
+		align-items: center;
+		justify-content: start;
+		gap: 0.3rem;
+		.menu_btn {
+			background: 0;
+			border: 0;
+			outline: 0;
+			i {
+				font-size: 2rem;
+			}
+		}
+	}
+}
+
+.formbcc {
+	background-color: white;
+	position: fixed;
+	top: 4.5rem;
+	width: 100%;
+	padding: 0.5rem 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	.search_what {
+		width: 80%;
+		background: #f4f4f4;
+		border-radius: 20px;
+		display: flex;
+		align-items: center;
+		justify-content: start;
+		gap: 0.5rem;
+		padding: 0 0.5rem;
+		// margin-top: 6rem;
+
+		input {
+			width: 90%;
+			border: 0;
+			background: 0;
+			outline: 0;
+			padding: 0.6rem 0;
+		}
+	}
+}
