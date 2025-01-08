@@ -1,0 +1,36 @@
+.together {
+	background: #e9f8f5;
+	margin-top: 3rem;
+	position: relative;
+	text-align: center;
+	h1 {
+		font-size: clamp(1.3rem, 2vh, 2rem);
+		margin-top: 2rem;
+		// background-color: red;
+		padding-top: 3.5rem;
+	}
+	.together_svg {
+		position: absolute;
+		top: -25px;
+		left: 50%;
+		transform: translate(-50%, 0);
+	}
+	.together_cards {
+		display: flex;
+		justify-content: flex-start;
+		gap: 1rem;
+		align-items: center;
+		flex-wrap: wrap;
+		.together_card {
+			padding: 2rem;
+			.glovo_together {
+				border: 0;
+				font-size: 1.2rem;
+				border-radius: 20px;
+				padding: 0.3rem 1rem;
+				outline: 0;
+				background: #00a082;
+			}
+		}
+	}
+}

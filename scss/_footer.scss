@@ -1,0 +1,38 @@
+footer {
+	background: black;
+	color: white;
+	padding: 1.5rem;
+	a {
+		text-decoration: none;
+		color: rgba(255, 255, 255, 0.788);
+		display: block;
+		padding: 0.3rem 0;
+	}
+	.lets {
+		h3 {
+			font-size: clamp(1rem, 2vh, 1.5rem);
+		}
+	}
+	.footer_btns {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.6rem;
+		padding: 0.3rem 0;
+		.download {
+			background: 0;
+			border: 0;
+			outline: 0;
+			border-radius: 5px;
+		}
+	}
+	.last_links {
+		a {
+			text-decoration: none;
+			text-transform: uppercase;
+			color: white;
+			padding: 0.3rem 0;
+			font-size: 0.8rem;
+		}
+	}
+}

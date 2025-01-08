@@ -1,0 +1,43 @@
+.hero {
+	background: #ffc244;
+	// height: 100vh;
+	padding: 1.5rem;
+	padding-top: 5rem;
+	padding-bottom: 4rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	flex-wrap: wrap;
+	a {
+		text-decoration: none;
+		width: 100px;
+		height: 100px;
+		background: white;
+		border-radius: 50%;
+		position: relative;
+		box-shadow: rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em,
+			rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em,
+			rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset;
+		.img_container {
+			width: 50px;
+			height: 50px;
+			position: absolute;
+			top: 50%;
+			right: 50%;
+			transform: translate(50%, -70%);
+		}
+		img {
+			width: 100%;
+			height: 100%;
+			margin: auto;
+		}
+		p {
+			position: absolute;
+			bottom: 20%;
+			left: 50%;
+			transform: translate(-50%, 0);
+			color: black;
+		}
+	}
+}

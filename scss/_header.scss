@@ -1,0 +1,36 @@
+header {
+	background: #ffc244;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0.7rem 1rem;
+	position: fixed;
+	top: 0;
+	width: 100%;
+	z-index: 2;
+	.logo {
+		h2 {
+			color: #00a082;
+			position: relative;
+			font-size: 1.6rem;
+			font-weight: 500;
+			span {
+				position: absolute;
+				top: -10px;
+				left: 58px;
+				img {
+					width: 30px;
+				}
+			}
+		}
+	}
+	a {
+		color: white;
+		background: #00a082;
+		text-decoration: none;
+		padding: 0.6rem 1.3rem;
+		border-radius: 25px;
+		font-weight: 600;
+		font-size: 1.2rem;
+	}
+}
