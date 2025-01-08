@@ -1,43 +1,179 @@
-.hero {
-	background: #ffc244;
-	// height: 100vh;
-	padding: 1.5rem;
-	padding-top: 5rem;
-	padding-bottom: 4rem;
+// Variables
+$background-color: #ffa500;
+$blob-color: #ffffff;
+$text-color: #333333;
+$transition-duration: 0.3s;
+$blob-size: 120px;
+$center-blob-size: 140px;
+
+// Mixins
+@mixin flex-center {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	gap: 0.5rem;
-	flex-wrap: wrap;
-	a {
-		text-decoration: none;
-		width: 100px;
-		height: 100px;
-		background: white;
-		border-radius: 50%;
+}
+
+@mixin blob-position($top, $left) {
+	position: absolute;
+	top: $top;
+	left: $left;
+	transform: translate(-50%, -50%);
+}
+
+.hero {
+	margin-top: 3rem;
+	background-color: #ffa500;
+	width: 100%;
+	max-width: 600px;
+	aspect-ratio: 1;
+	position: relative;
+	@include flex-center;
+	padding: 20px;
+	padding-bottom: 3rem;
+
+	.blob-menu {
+		width: 100%;
+		height: 100%;
 		position: relative;
-		box-shadow: rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em,
-			rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em,
-			rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset;
-		.img_container {
-			width: 50px;
-			height: 50px;
-			position: absolute;
-			top: 50%;
-			right: 50%;
-			transform: translate(50%, -70%);
+
+		&__item {
+			width: $blob-size;
+			height: $blob-size;
+			background-color: $blob-color;
+			border-radius: 50%;
+			text-decoration: none;
+			color: $text-color;
+			transition: transform $transition-duration ease;
+			@include flex-center;
+			box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+
+			&:hover {
+				transform: translate(-50%, -50%) scale(1.1);
+			}
+
+			// Positioning for each blob
+			&--shops {
+				@include blob-position(20%, 25%);
+			}
+
+			&--groceries {
+				@include blob-position(20%, 75%);
+			}
+
+			&--food {
+				@include blob-position(50%, 50%);
+				width: $center-blob-size;
+				height: $center-blob-size;
+				z-index: 1;
+			}
+
+			&--pharmacy {
+				@include blob-position(80%, 25%);
+			}
+
+			&--delivery {
+				@include blob-position(80%, 75%);
+			}
 		}
-		img {
-			width: 100%;
-			height: 100%;
-			margin: auto;
+
+		&__content {
+			text-align: center;
 		}
-		p {
-			position: absolute;
-			bottom: 20%;
-			left: 50%;
-			transform: translate(-50%, 0);
-			color: black;
+
+		&__icon {
+			margin-bottom: 8px;
+
+			img {
+				width: 150px;
+				height: 150px;
+				object-fit: contain;
+			}
+		}
+
+		&__text {
+			font-size: 14px;
+			font-weight: 500;
+			display: block;
+			line-height: 1.2;
 		}
 	}
+
+	// Media Queries
+	@media (max-width: 768px) {
+		.blob-menu {
+			&__item {
+				width: calc(#{$blob-size} * 0.8);
+				height: calc(#{$blob-size} * 0.8);
+
+				&--food {
+					width: calc(#{$center-blob-size} * 0.8);
+					height: calc(#{$center-blob-size} * 0.8);
+				}
+			}
+
+			&__icon img {
+				width: 30px;
+				height: 30px;
+			}
+
+			&__text {
+				font-size: 12px;
+			}
+		}
+	}
+
+	@media (max-width: 480px) {
+		.blob-menu {
+			&__item {
+				width: calc(#{$blob-size} * 0.6);
+				height: calc(#{$blob-size} * 0.6);
+
+				&--food {
+					width: calc(#{$center-blob-size} * 0.6);
+					height: calc(#{$center-blob-size} * 0.6);
+				}
+			}
+
+			&__icon img {
+				width: 24px;
+				height: 24px;
+			}
+
+			&__text {
+				font-size: 10px;
+			}
+		}
+	}
+
+	// a {
+	// 	text-decoration: none;
+	// 	width: 100px;
+	// 	height: 100px;
+	// 	background: white;
+	// 	border-radius: 50%;
+	// 	position: relative;
+	// 	box-shadow: rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em,
+	// 		rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em,
+	// 		rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset;
+	// 	.img_container {
+	// 		width: 50px;
+	// 		height: 50px;
+	// 		position: absolute;
+	// 		top: 50%;
+	// 		right: 50%;
+	// 		transform: translate(50%, -70%);
+	// 	}
+	// 	img {
+	// 		width: 100%;
+	// 		height: 100%;
+	// 		margin: auto;
+	// 	}
+	// 	p {
+	// 		position: absolute;
+	// 		bottom: 20%;
+	// 		left: 50%;
+	// 		transform: translate(-50%, 0);
+	// 		color: black;
+	// 	}
+	// }
 }
