@@ -1,5 +1,5 @@
 // Variables
-$background-color: #ffa500;
+$background-color: #ffc244;
 $blob-color: #ffffff;
 $text-color: #333333;
 $transition-duration: 0.3s;
@@ -22,7 +22,7 @@ $center-blob-size: 140px;
 
 .hero {
 	margin-top: 3rem;
-	background-color: #ffa500;
+	background-color: #ffc244;
 	width: 100%;
 	max-width: 600px;
 	aspect-ratio: 1;
@@ -84,8 +84,8 @@ $center-blob-size: 140px;
 			margin-bottom: 8px;
 
 			img {
-				width: 150px;
-				height: 150px;
+				width: 60px;
+				height: 60px;
 				object-fit: contain;
 			}
 		}
