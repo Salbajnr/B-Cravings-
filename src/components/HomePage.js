@@ -1,62 +1,99 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import Header from './Header';
 import Footer from './Footer';
+import SearchForm from './SearchForm';
+import HeroSection from './HeroSection';
+import StoreCard from './StoreCard';
 
 const HomePage = () => {
-  const currentDeals = [
-    { 
-      id: 1, 
-      title: "Burger House", 
-      rating: 4.5, 
-      image: "https://images.unsplash.com/photo-1571091718767-18b5b1457add",
-      tag: "Fast Food",
-      discount: "30% OFF"
-    },
-    { 
-      id: 2, 
-      title: "Pizza Palace", 
-      rating: 4.7, 
-      image: "https://images.unsplash.com/photo-1513104890138-7c749659a591",
-      tag: "Pizza"
-    }
-  ];
+  const [searchResults, setSearchResults] = useState([]);
+  const [currentDeals, setCurrentDeals] = useState([]);
+  const [popularRestaurants, setPopularRestaurants] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const popularRestaurants = [
-    { id: 1, name: "Burger House", rating: 4.5, image: "https://images.unsplash.com/photo-1571091718767-18b5b1457add" },
-    { id: 2, name: "Pizza Palace", rating: 4.7, image: "https://images.unsplash.com/photo-1513104890138-7c749659a591" },
-    { id: 3, name: "Sushi Master", rating: 4.6, image: "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351" },
-    { id: 4, name: "Taco Bell", rating: 4.3, image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b" }
-  ];
+  useEffect(() => {
+    loadInitialData();
+  }, []);
+
+  const loadInitialData = async () => {
+    try {
+      // Fetch mock data from JSONPlaceholder
+      const [dealsResponse, restaurantsResponse] = await Promise.all([
+        axios.get('https://jsonplaceholder.typicode.com/posts?_limit=6'),
+        axios.get('https://jsonplaceholder.typicode.com/users')
+      ]);
+
+      // Transform deals data
+      const deals = dealsResponse.data.map(post => ({
+        id: post.id,
+        title: post.title.split(' ').slice(0, 2).join(' ') + ' Restaurant',
+        rating: (4.0 + Math.random()).toFixed(1),
+        image: `https://picsum.photos/400/250?random=${post.id}`,
+        tag: ['Fast Food', 'Pizza', 'Asian', 'Mexican', 'Italian'][Math.floor(Math.random() * 5)],
+        discount: Math.random() > 0.5 ? `${Math.floor(Math.random() * 30 + 10)}% OFF` : null
+      }));
+
+      // Transform restaurants data
+      const restaurants = restaurantsResponse.data.map(user => ({
+        id: user.id,
+        name: user.company.name + ' Kitchen',
+        rating: (4.0 + Math.random()).toFixed(1),
+        image: `https://picsum.photos/300/200?random=${user.id + 100}`,
+        cuisine: ['Italian', 'Chinese', 'Mexican', 'American', 'Indian'][Math.floor(Math.random() * 5)],
+        deliveryTime: `${Math.floor(Math.random() * 20 + 15)}-${Math.floor(Math.random() * 15 + 30)} min`,
+        deliveryFee: `$${(Math.random() * 3 + 1).toFixed(2)}`
+      }));
+
+      setCurrentDeals(deals);
+      setPopularRestaurants(restaurants);
+    } catch (error) {
+      console.error('Failed to load data:', error);
+    }
+    setLoading(false);
+  };
 
   const featuredCuisines = [
     { name: "Burgers", color: "#4A90E2", icon: "🍔" },
     { name: "Pizza", color: "#7ED321", icon: "🍕" },
-    { name: "Sushi", color: "#F5A623", icon: "🍱" }
+    { name: "Sushi", color: "#F5A623", icon: "🍱" },
+    { name: "Mexican", color: "#BD10E0", icon: "🌮" }
   ];
 
-  const featuredOffers = [
-    {
-      id: 1,
-      title: "Burger Combo",
-      subtitle: "Only $5.99 • Today only",
-      image: "https://images.unsplash.com/photo-1571091718767-18b5b1457add",
-      buttonText: "Order"
-    },
-    {
-      id: 2,
-      title: "2-for-1 Pizza",
-      subtitle: "On all Margherita pizzas",
-      image: "https://images.unsplash.com/photo-1513104890138-7c749659a591",
-      buttonText: "Order"
-    }
-  ];
+  if (loading) {
+    return (
+      <div className="app">
+        <Header />
+        <div className="loading-container">
+          <div className="loading-spinner">Loading...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="app">
       <Header />
       
       <main className="main-content">
+        <HeroSection />
+
+        {/* Search Section */}
+        <SearchForm onResults={setSearchResults} />
+
+        {/* Search Results */}
+        {searchResults.length > 0 && (
+          <section className="search-results-section">
+            <h2>Search Results</h2>
+            <div className="restaurant-grid">
+              {searchResults.map(restaurant => (
+                <StoreCard key={restaurant.id} {...restaurant} />
+              ))}
+            </div>
+          </section>
+        )}
+
         {/* Current Deals Section */}
         <section className="deals-section">
           <div className="section-header">
@@ -64,13 +101,6 @@ const HomePage = () => {
             <button className="view-all-btn">View all</button>
           </div>
           
-          <div className="search-container">
-            <div className="search-box">
-              <i className="bx bx-search"></i>
-              <input type="text" placeholder="Search restaurants, dishes..." />
-            </div>
-          </div>
-
           <div className="deals-carousel">
             {currentDeals.map(deal => (
               <div key={deal.id} className="deal-card">
@@ -99,27 +129,9 @@ const HomePage = () => {
           </div>
           
           <div className="restaurant-grid">
-            {popularRestaurants.map(restaurant => (
-              <div key={restaurant.id} className="restaurant-card">
-                <div className="restaurant-image">
-                  <img src={restaurant.image} alt={restaurant.name} />
-                </div>
-                <div className="restaurant-info">
-                  <h3>{restaurant.name}</h3>
-                  <div className="rating">
-                    <span className="star">★</span>
-                    <span>{restaurant.rating}</span>
-                  </div>
-                </div>
-              </div>
+            {popularRestaurants.slice(0, 4).map(restaurant => (
+              <StoreCard key={restaurant.id} {...restaurant} />
             ))}
-          </div>
-          
-          <div className="carousel-dots">
-            <span className="dot active"></span>
-            <span className="dot"></span>
-            <span className="dot"></span>
-            <span className="dot"></span>
           </div>
         </section>
 
@@ -132,23 +144,15 @@ const HomePage = () => {
           
           <div className="cuisine-buttons">
             {featuredCuisines.map((cuisine, index) => (
-              <button key={index} className="cuisine-btn" style={{backgroundColor: cuisine.color}}>
+              <button 
+                key={index} 
+                className="cuisine-btn" 
+                style={{backgroundColor: cuisine.color}}
+                onClick={() => alert(`${cuisine.name} restaurants coming soon!`)}
+              >
                 <span className="cuisine-icon">{cuisine.icon}</span>
                 {cuisine.name}
               </button>
-            ))}
-          </div>
-
-          <div className="featured-offers">
-            {featuredOffers.map(offer => (
-              <div key={offer.id} className="offer-item">
-                <img src={offer.image} alt={offer.title} className="offer-image" />
-                <div className="offer-content">
-                  <h4>{offer.title}</h4>
-                  <p>{offer.subtitle}</p>
-                </div>
-                <button className="order-btn">{offer.buttonText}</button>
-              </div>
             ))}
           </div>
         </section>

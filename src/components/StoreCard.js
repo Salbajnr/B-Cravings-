@@ -1,31 +1,47 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const StoreCard = ({ title, rating, image, tag, discount }) => {
+const StoreCard = ({ 
+  id, 
+  name, 
+  rating, 
+  image, 
+  cuisine, 
+  deliveryTime = '20-30 min',
+  deliveryFee = '$2.99',
+  discount,
+  isPromoted = false 
+}) => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/restaurant/${id}`, { 
+      state: { 
+        restaurantData: { id, name, rating, image, cuisine, deliveryTime, deliveryFee } 
+      } 
+    });
+  };
+
   return (
-    <div className="card">
-      <div className="card__image">
-        <img src={image} alt={title} />
-        <span className="card__tag">{tag}</span>
-        {discount && <span className="card__discount">{discount}</span>}
+    <div className={`store-card ${isPromoted ? 'promoted' : ''}`} onClick={handleClick}>
+      <div className="store-image">
+        <img src={image} alt={name} loading="lazy" />
+        {discount && <span className="discount-badge">{discount}</span>}
+        {isPromoted && <span className="promoted-badge">Promoted</span>}
       </div>
-      <div className="card__content">
-        <h2 className="card__title">{title}</h2>
-        <div className="card__rating">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
-          </svg>
-          <span>{rating}%</span>
+      
+      <div className="store-info">
+        <h3 className="store-name">{name}</h3>
+        <p className="store-cuisine">{cuisine}</p>
+        
+        <div className="store-details">
+          <div className="rating">
+            <span className="star">★</span>
+            <span>{rating}</span>
+          </div>
+          <span className="delivery-time">{deliveryTime}</span>
+          <span className="delivery-fee">{deliveryFee}</span>
         </div>
       </div>
     </div>
