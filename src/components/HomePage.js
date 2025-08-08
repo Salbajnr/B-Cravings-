@@ -1,161 +1,247 @@
-
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect, useContext } from 'react';
+import { Link } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
-import SearchForm from './SearchForm';
-import HeroSection from './HeroSection';
-import StoreCard from './StoreCard';
+import { AppContext } from '../context/AppContext';
+import { fetchRestaurants } from '../services/apiService';
 
 const HomePage = () => {
+  const { state, dispatch } = useContext(AppContext);
   const [searchResults, setSearchResults] = useState([]);
-  const [currentDeals, setCurrentDeals] = useState([]);
-  const [popularRestaurants, setPopularRestaurants] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [featuredDeals, setFeaturedDeals] = useState([]);
 
   useEffect(() => {
-    loadInitialData();
-  }, []);
+    const getRestaurants = async () => {
+      dispatch({ type: 'SET_LOADING', payload: true });
+      try {
+        const data = await fetchRestaurants();
+        setFeaturedDeals(data);
+        dispatch({ type: 'SET_RESTAURANTS', payload: data });
+      } catch (error) {
+        console.error("Error fetching restaurants:", error);
+        dispatch({ type: 'SET_ERROR', payload: 'Failed to load restaurants' });
+      } finally {
+        dispatch({ type: 'SET_LOADING', payload: false });
+      }
+    };
 
-  const loadInitialData = async () => {
-    try {
-      // Fetch mock data from JSONPlaceholder
-      const [dealsResponse, restaurantsResponse] = await Promise.all([
-        axios.get('https://jsonplaceholder.typicode.com/posts?_limit=6'),
-        axios.get('https://jsonplaceholder.typicode.com/users')
-      ]);
+    getRestaurants();
+  }, [dispatch]);
 
-      // Transform deals data
-      const deals = dealsResponse.data.map(post => ({
-        id: post.id,
-        title: post.title.split(' ').slice(0, 2).join(' ') + ' Restaurant',
-        rating: (4.0 + Math.random()).toFixed(1),
-        image: `https://picsum.photos/400/250?random=${post.id}`,
-        tag: ['Fast Food', 'Pizza', 'Asian', 'Mexican', 'Italian'][Math.floor(Math.random() * 5)],
-        discount: Math.random() > 0.5 ? `${Math.floor(Math.random() * 30 + 10)}% OFF` : null
-      }));
-
-      // Transform restaurants data
-      const restaurants = restaurantsResponse.data.map(user => ({
-        id: user.id,
-        name: user.company.name + ' Kitchen',
-        rating: (4.0 + Math.random()).toFixed(1),
-        image: `https://picsum.photos/300/200?random=${user.id + 100}`,
-        cuisine: ['Italian', 'Chinese', 'Mexican', 'American', 'Indian'][Math.floor(Math.random() * 5)],
-        deliveryTime: `${Math.floor(Math.random() * 20 + 15)}-${Math.floor(Math.random() * 15 + 30)} min`,
-        deliveryFee: `$${(Math.random() * 3 + 1).toFixed(2)}`
-      }));
-
-      setCurrentDeals(deals);
-      setPopularRestaurants(restaurants);
-    } catch (error) {
-      console.error('Failed to load data:', error);
+  const handleSearch = (query) => {
+    dispatch({ type: 'SET_SEARCH_QUERY', payload: query });
+    if (query.trim() === '') {
+      setSearchResults([]);
+    } else {
+      const filtered = state.restaurants.filter(restaurant =>
+        restaurant.name.toLowerCase().includes(query.toLowerCase()) ||
+        restaurant.cuisine.toLowerCase().includes(query.toLowerCase())
+      );
+      setSearchResults(filtered);
     }
-    setLoading(false);
   };
 
-  const featuredCuisines = [
-    { name: "Burgers", color: "#4A90E2", icon: "🍔" },
-    { name: "Pizza", color: "#7ED321", icon: "🍕" },
-    { name: "Sushi", color: "#F5A623", icon: "🍱" },
-    { name: "Mexican", color: "#BD10E0", icon: "🌮" }
-  ];
-
-  if (loading) {
-    return (
-      <div className="app">
-        <Header />
-        <div className="loading-container">
-          <div className="loading-spinner">Loading...</div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="app">
+    <div className="home-page">
       <Header />
-      
-      <main className="main-content">
-        <HeroSection />
 
-        {/* Search Section */}
-        <SearchForm onResults={setSearchResults} />
+      <main>
+        {/* Search Bar */}
+        <div className="search-section">
+          <div className="search-container">
+            <i className="bx bx-search"></i>
+            <input
+              type="text"
+              placeholder="Search for restaurants, cuisines..."
+              value={state.searchQuery}
+              onChange={(e) => handleSearch(e.target.value)}
+            />
+          </div>
+        </div>
 
         {/* Search Results */}
         {searchResults.length > 0 && (
-          <section className="search-results-section">
+          <section className="search-results">
             <h2>Search Results</h2>
-            <div className="restaurant-grid">
+            <div className="restaurants-grid">
               {searchResults.map(restaurant => (
-                <StoreCard key={restaurant.id} {...restaurant} />
+                <Link
+                  key={restaurant.id}
+                  to={`/restaurant/${restaurant.id}`}
+                  className="restaurant-card"
+                >
+                  <img src={restaurant.image} alt={restaurant.name} />
+                  <div className="restaurant-info">
+                    <h3>{restaurant.name}</h3>
+                    <p>{restaurant.cuisine}</p>
+                    <div className="restaurant-meta">
+                      <span>⭐ {restaurant.rating}</span>
+                      <span>🕐 {restaurant.deliveryTime}</span>
+                    </div>
+                  </div>
+                </Link>
               ))}
             </div>
           </section>
         )}
 
-        {/* Current Deals Section */}
-        <section className="deals-section">
-          <div className="section-header">
-            <h2>Current Deals</h2>
-            <button className="view-all-btn">View all</button>
-          </div>
-          
-          <div className="deals-carousel">
-            {currentDeals.map(deal => (
-              <div key={deal.id} className="deal-card">
-                <div className="deal-image">
-                  <img src={deal.image} alt={deal.title} />
-                  {deal.discount && <span className="discount-badge">{deal.discount}</span>}
-                  <span className="category-tag">{deal.tag}</span>
+        <div className="hero">
+          <div className="blob-menu">
+            {/* Top blobs */}
+            <a href="#shops" className="blob-menu__item blob-menu__item--shops">
+              <div className="blob-menu__content">
+                <div className="blob-menu__icon">
+                  <img
+                    src="./glovoimages/cc38634d7f470f25c61bb209899f12a44032cb0251409b4cd75368da5c88.png"
+                    alt="Shopping bags icon"
+                  />
                 </div>
-                <div className="deal-info">
-                  <h3>{deal.title}</h3>
-                  <div className="rating">
-                    <span className="star">★</span>
-                    <span>{deal.rating}</span>
-                  </div>
-                </div>
+                <span className="blob-menu__text">Shops</span>
               </div>
-            ))}
-          </div>
-        </section>
+            </a>
 
-        {/* Popular Restaurants */}
-        <section className="popular-section">
-          <div className="section-header">
-            <h2>Popular Restaurants</h2>
-            <button className="see-all-btn">See all</button>
-          </div>
-          
-          <div className="restaurant-grid">
-            {popularRestaurants.slice(0, 4).map(restaurant => (
-              <StoreCard key={restaurant.id} {...restaurant} />
-            ))}
-          </div>
-        </section>
+            <a href="#groceries" className="blob-menu__item blob-menu__item--groceries">
+              <div className="blob-menu__content">
+                <div className="blob-menu__icon">
+                  <img
+                    src="./glovoimages/6590ca182c60df74bfef8aa3a427f17c50a32824bc9979e4b5d5a40dc5a8.png"
+                    alt="Shopping cart icon"
+                  />
+                </div>
+                <span className="blob-menu__text">Groceries</span>
+              </div>
+            </a>
 
-        {/* Featured Cuisines */}
-        <section className="cuisines-section">
-          <div className="section-header">
-            <h2>Featured Cuisines</h2>
-            <button className="browse-btn">Browse</button>
+            {/* Center blob */}
+            <Link to="/food" className="blob-menu__item blob-menu__item--food">
+              <div className="blob-menu__content">
+                <div className="blob-menu__icon">
+                  <img
+                    src="./glovoimages/3ec9bff5a4a85485922e6c6f74de529bc7981ac30e5766e8a8648c7d3f28.png"
+                    alt="Food icon"
+                  />
+                </div>
+                <span className="blob-menu__text">Food</span>
+              </div>
+            </Link>
+
+            {/* Bottom blobs */}
+            <a href="#pharmacy" className="blob-menu__item blob-menu__item--pharmacy">
+              <div className="blob-menu__content">
+                <div className="blob-menu__icon">
+                  <img
+                    src="./glovoimages/abe0e6d60c9e6e62d73ede9d1eec870dac15283d32b5aeee41045402e466.png"
+                    alt="Pharmacy icon"
+                  />
+                </div>
+                <span className="blob-menu__text">Pharmacy</span>
+              </div>
+            </a>
+
+            <a href="#courier" className="blob-menu__item blob-menu__item--courier">
+              <div className="blob-menu__content">
+                <div className="blob-menu__icon">
+                  <img
+                    src="./glovoimages/c662b1ad74dc7c385a968aacf39778c327509a9d4e3e3d060a420c9c293d.png"
+                    alt="Courier icon"
+                  />
+                </div>
+                <span className="blob-menu__text">Courier</span>
+              </div>
+            </a>
           </div>
-          
-          <div className="cuisine-buttons">
-            {featuredCuisines.map((cuisine, index) => (
-              <button 
-                key={index} 
-                className="cuisine-btn" 
-                style={{backgroundColor: cuisine.color}}
-                onClick={() => alert(`${cuisine.name} restaurants coming soon!`)}
-              >
-                <span className="cuisine-icon">{cuisine.icon}</span>
-                {cuisine.name}
+        </div>
+
+        {/* Featured Restaurants */}
+        {featuredDeals.length > 0 && (
+          <section className="featured-section">
+            <h2>Featured Restaurants</h2>
+            <div className="restaurants-grid">
+              {featuredDeals.map(restaurant => (
+                <Link
+                  key={restaurant.id}
+                  to={`/restaurant/${restaurant.id}`}
+                  className="restaurant-card"
+                >
+                  <img src={restaurant.image} alt={restaurant.name} />
+                  <div className="restaurant-info">
+                    <h3>{restaurant.name}</h3>
+                    <p>{restaurant.cuisine}</p>
+                    <div className="restaurant-meta">
+                      <span>⭐ {restaurant.rating}</span>
+                      <span>🕐 {restaurant.deliveryTime}</span>
+                      <span className={restaurant.isOpen ? 'open' : 'closed'}>
+                        {restaurant.isOpen ? 'Open' : 'Closed'}
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+
+        <div className="top_category">
+          <div className="top_svg">
+            <img src="./glovoimages/cities.svg" alt="" />
+          </div>
+          <h1>Top Categories in Kampala</h1>
+          <div className="top_bottons">
+            {['Fast food', 'Chicken', 'Snacks', 'Pizza', 'Burgers', 'Local food', 'Indian', 'Grill', 'Healthy', 'Sandwich'].map(category => (
+              <button key={category} className="top_btn" onClick={() => handleSearch(category)}>
+                {category}
               </button>
             ))}
           </div>
-        </section>
+        </div>
+
+        <div className="together">
+          <div className="together_svg">
+            <img src="./glovoimages/together-opt.svg" alt="" />
+          </div>
+          <h1>Let's do it together</h1>
+          <div className="together_cards">
+            <div className="together_card">
+              <div className="img_togther">
+                <img src="./glovoimages/rider-image-opt.png" alt="" />
+              </div>
+              <h2>Become a rider</h2>
+              <p>
+                Enjoy flexibility, freedom and competitive earnings by delivering
+                through Glovo.
+              </p>
+              <button className="glovo_together">Register here</button>
+            </div>
+            <div className="together_card">
+              <div className="img_togther">
+                <img src="./glovoimages/partners-image-opt.png" alt="" />
+              </div>
+              <h2>Become a partner</h2>
+              <p>
+                Grow your business and reach more customers by partnering with
+                Glovo.
+              </p>
+              <button className="glovo_together">Register here</button>
+            </div>
+            <div className="together_card">
+              <div className="img_togther">
+                <img src="./glovoimages/careers-image-opt.png" alt="" />
+              </div>
+              <h2>Join our team</h2>
+              <p>
+                Be part of an innovative team that's changing the way people get
+                things done.
+              </p>
+              <button className="glovo_together">See careers</button>
+            </div>
+          </div>
+        </div>
+
+        {state.loading && (
+          <div className="loading-spinner">
+            <div className="spinner">Loading...</div>
+          </div>
+        )}
       </main>
 
       <Footer />

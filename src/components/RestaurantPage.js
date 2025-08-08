@@ -1,50 +1,77 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from './Header';
+import { useParams } from 'react-router-dom';
+import { useApp } from './AppContext';
+import * as restaurantService from './services/restaurantService';
 
 const RestaurantPage = () => {
-  const [cart, setCart] = useState([]);
-
-  const restaurant = {
-    name: "Pizza Palace",
-    cuisine: "Italian • Pizza • $$",
-    description: "Authentic Italian pizzas made with fresh ingredients. Cozy atmosphere and fast delivery.",
-    rating: 4.7,
-    totalRatings: 345,
-    images: [
-      "https://images.unsplash.com/photo-1513104890138-7c749659a591",
-      "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b",
-      "https://images.unsplash.com/photo-1574071318508-1cdbab80d002",
-      "https://images.unsplash.com/photo-1571997478779-2adcbbe9ab2f"
-    ]
-  };
-
-  const menuItems = [
-    { id: 1, name: "Margherita Pizza", description: "Fresh tomato, mozzarella, basil", price: 13.99, image: "https://images.unsplash.com/photo-1513104890138-7c749659a591" },
-    { id: 2, name: "Pasta Carbonara", description: "Creamy sauce, pancetta, parmesan", price: 15.99, image: "https://images.unsplash.com/photo-1621996346565-e3dbc353d2e5" },
-    { id: 3, name: "Caesar Salad", description: "Romaine, parmesan, croutons", price: 9.99, image: "https://images.unsplash.com/photo-1512852939750-1305098529bf" },
-    { id: 4, name: "Tiramisu", description: "Espresso, mascarpone, cocoa", price: 6.99, image: "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9" }
-  ];
+  const { id } = useParams();
+  const { state, dispatch } = useApp();
+  const [restaurant, setRestaurant] = useState(null);
+  const [menuItems, setMenuItems] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const reviews = [
-    { id: 1, name: "Sarah W.", review: "Excellent pizza, quick delivery!", rating: 5 },
-    { id: 2, name: "Alex M.", review: "Loved the pasta and friendly staff.", rating: 4 },
+    { id: 1, name: "Sarah W.", review: "Excellent food, quick delivery!", rating: 5 },
+    { id: 2, name: "Alex M.", review: "Loved the dishes and friendly staff.", rating: 4 },
     { id: 3, name: "Priya S.", review: "Great food and reasonable prices.", rating: 5 }
   ];
 
-  const addToCart = (item) => {
-    setCart([...cart, item]);
+  useEffect(() => {
+    loadRestaurantData();
+  }, [id]);
+
+  const loadRestaurantData = async () => {
+    setLoading(true);
+    try {
+      // Get restaurant info
+      const restaurants = await restaurantService.getRestaurants();
+      const currentRestaurant = restaurants.find(r => r.id.toString() === id) || restaurants[0];
+      setRestaurant(currentRestaurant);
+
+      // Get menu
+      const menu = await restaurantService.getRestaurantMenu(id);
+      setMenuItems(menu);
+    } catch (error) {
+      console.error('Error loading restaurant:', error);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const addToCart = (item) => {
+    dispatch({ type: 'ADD_TO_CART', payload: { ...item, restaurantId: id } });
+  };
+
+  if (loading) {
+    return (
+      <div className="restaurant-page">
+        <Header isRestaurant={true} />
+        <div className="loading-spinner">
+          <div className="spinner">Loading restaurant...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!restaurant) {
+    return (
+      <div className="restaurant-page">
+        <Header isRestaurant={true} />
+        <div className="error-message">Restaurant not found</div>
+      </div>
+    );
+  }
 
   return (
     <div className="restaurant-page">
       <Header isRestaurant={true} />
-      
+
       <main className="restaurant-content">
         {/* Restaurant Header */}
         <div className="restaurant-header">
           <div className="restaurant-info">
-            <img src={restaurant.images[0]} alt={restaurant.name} className="restaurant-logo" />
+            <img src={restaurant.image} alt={restaurant.name} className="restaurant-logo" />
             <div className="restaurant-details">
               <h1>{restaurant.name}</h1>
               <p className="restaurant-cuisine">{restaurant.cuisine}</p>
@@ -54,13 +81,13 @@ const RestaurantPage = () => {
               <button className="share-btn">⤴</button>
             </div>
           </div>
-          
+
           <p className="restaurant-description">{restaurant.description}</p>
-          
+
           {/* Restaurant Images */}
           <div className="restaurant-images">
             <div className="main-image">
-              <img src={restaurant.images[0]} alt="Restaurant" />
+              <img src={restaurant.image} alt="Restaurant" />
             </div>
             <div className="side-images">
               <img src={restaurant.images[1]} alt="Food" />
@@ -74,7 +101,7 @@ const RestaurantPage = () => {
               <span className="image-label">Pasta Carbonara</span>
             </div>
           </div>
-          
+
           <div className="carousel-dots">
             <span className="dot active"></span>
             <span className="dot"></span>
@@ -89,7 +116,7 @@ const RestaurantPage = () => {
             <h2>Menu</h2>
             <button className="see-all-btn">See all</button>
           </div>
-          
+
           <div className="menu-items">
             {menuItems.map(item => (
               <div key={item.id} className="menu-item">
@@ -115,7 +142,7 @@ const RestaurantPage = () => {
             <h2>Ratings & Reviews</h2>
             <button className="add-review-btn">Add review</button>
           </div>
-          
+
           <div className="rating-summary">
             <div className="rating-score">
               <span className="star">★</span>
@@ -123,7 +150,7 @@ const RestaurantPage = () => {
             </div>
             <span className="rating-count">{restaurant.totalRatings} ratings</span>
           </div>
-          
+
           <div className="reviews-list">
             {reviews.map(review => (
               <div key={review.id} className="review-item">
@@ -138,9 +165,9 @@ const RestaurantPage = () => {
         </section>
       </main>
 
-      {cart.length > 0 && (
+      {state.cart.length > 0 && (
         <div className="cart-preview">
-          <span>{cart.length} items in cart</span>
+          <span>{state.cart.length} items in cart</span>
           <button className="view-cart-btn">View Cart</button>
         </div>
       )}

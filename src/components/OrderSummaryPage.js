@@ -1,26 +1,30 @@
 
-import React, { useState } from 'react';
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { useApp } from '../context/AppContext';
 import Header from './Header';
 
 const OrderSummaryPage = () => {
-  const [orderItems, setOrderItems] = useState([
-    { id: 1, name: "Spaghetti Bolognese", quantity: 2, price: 10.99 },
-    { id: 2, name: "Margherita Pizza", quantity: 1, price: 13.99 },
-    { id: 3, name: "Tiramisu", quantity: 1, price: 6.50 }
-  ]);
-
-  const restaurant = "Mama's Italian Kitchen";
+  const { state, dispatch } = useApp();
+  
   const deliveryFee = 2.99;
-
-  const subtotal = orderItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const subtotal = state.cart.reduce((sum, item) => sum + (parseFloat(item.price) * item.quantity), 0);
   const total = subtotal + deliveryFee;
 
   const removeItem = (id) => {
-    setOrderItems(orderItems.filter(item => item.id !== id));
+    dispatch({ type: 'REMOVE_FROM_CART', payload: id });
   };
 
   const clearAll = () => {
-    setOrderItems([]);
+    dispatch({ type: 'CLEAR_CART' });
+  };
+
+  const updateQuantity = (id, quantity) => {
+    if (quantity <= 0) {
+      removeItem(id);
+    } else {
+      dispatch({ type: 'UPDATE_CART_QUANTITY', payload: { id, quantity } });
+    }
   };
 
   return (
@@ -34,37 +38,51 @@ const OrderSummaryPage = () => {
         </div>
         
         <div className="restaurant-info">
-          <h2>{restaurant}</h2>
+          <h2>Your Order</h2>
           <p>Review your order before checking out.</p>
         </div>
 
         <section className="order-items-section">
           <div className="section-header">
-            <h3>Your Items</h3>
-            <button className="clear-all-btn" onClick={clearAll}>Clear All</button>
+            <h3>Your Items ({state.cart.length})</h3>
+            {state.cart.length > 0 && (
+              <button className="clear-all-btn" onClick={clearAll}>Clear All</button>
+            )}
           </div>
           
-          <div className="order-items">
-            {orderItems.map(item => (
-              <div key={item.id} className="order-item">
-                <img 
-                  src={`https://images.unsplash.com/photo-${item.id === 1 ? '1621996346565-e3dbc353d2e5' : item.id === 2 ? '1513104890138-7c749659a591' : '1571877227200-a0d98ea607e9'}`} 
-                  alt={item.name} 
-                  className="item-image"
-                />
-                <div className="item-info">
-                  <h4>{item.name}</h4>
-                  <p>×{item.quantity} | ${item.price} each</p>
+          {state.cart.length === 0 ? (
+            <div className="empty-cart">
+              <p>Your cart is empty</p>
+              <Link to="/food" className="browse-btn">Browse Restaurants</Link>
+            </div>
+          ) : (
+            <div className="order-items">
+              {state.cart.map(item => (
+                <div key={item.id} className="order-item">
+                  <img 
+                    src={item.image || 'https://via.placeholder.com/80x80'} 
+                    alt={item.name} 
+                    className="item-image"
+                  />
+                  <div className="item-info">
+                    <h4>{item.name}</h4>
+                    <p>${parseFloat(item.price).toFixed(2)} each</p>
+                    <div className="quantity-controls">
+                      <button onClick={() => updateQuantity(item.id, item.quantity - 1)}>-</button>
+                      <span>{item.quantity}</span>
+                      <button onClick={() => updateQuantity(item.id, item.quantity + 1)}>+</button>
+                    </div>
+                  </div>
+                  <button 
+                    className="remove-btn"
+                    onClick={() => removeItem(item.id)}
+                  >
+                    ✕
+                  </button>
                 </div>
-                <button 
-                  className="remove-btn"
-                  onClick={() => removeItem(item.id)}
-                >
-                  ✕
-                </button>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </section>
 
         <section className="order-summary">
@@ -82,9 +100,11 @@ const OrderSummaryPage = () => {
           </div>
         </section>
 
-        <button className="checkout-btn">
-          🛒 Checkout
-        </button>
+        {state.cart.length > 0 && (
+          <Link to="/checkout" className="checkout-btn">
+            🛒 Checkout - ${total.toFixed(2)}
+          </Link>
+        )}
       </main>
     </div>
   );

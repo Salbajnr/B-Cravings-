@@ -1,28 +1,68 @@
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useApp } from '../context/AppContext';
+import { orderService } from '../services/api';
 import Header from './Header';
 
 const CheckoutPage = () => {
+  const navigate = useNavigate();
+  const { state, dispatch } = useApp();
   const [paymentMethod, setPaymentMethod] = useState('Card');
   const [cardDetails, setCardDetails] = useState({
     number: '',
     expiry: '',
     cvv: ''
   });
+  const [deliveryAddress, setDeliveryAddress] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
 
-  const orderSummary = {
-    items: [
-      { name: "Chicken Shawarma Wrap", quantity: 2, price: 8.50 },
-      { name: "Spicy Fries", quantity: 1, price: 3.00 },
-      { name: "Soft Drink", quantity: 1, price: 2.50 }
-    ],
-    deliveryFee: 2.99
-  };
-
-  const subtotal = orderSummary.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const total = subtotal + orderSummary.deliveryFee;
+  const deliveryFee = 2.99;
+  const subtotal = state.cart.reduce((sum, item) => sum + (parseFloat(item.price) * item.quantity), 0);
+  const total = subtotal + deliveryFee;
 
   const paymentMethods = ['Card', 'Apple Pay', 'PayPal', 'Cash'];
+
+  const handleConfirmOrder = async () => {
+    if (state.cart.length === 0) {
+      alert('Your cart is empty');
+      return;
+    }
+
+    if (!deliveryAddress.trim()) {
+      alert('Please enter a delivery address');
+      return;
+    }
+
+    if (paymentMethod === 'Card' && (!cardDetails.number || !cardDetails.expiry || !cardDetails.cvv)) {
+      alert('Please fill in all card details');
+      return;
+    }
+
+    setIsProcessing(true);
+    try {
+      const orderData = {
+        items: state.cart,
+        paymentMethod,
+        deliveryAddress,
+        subtotal,
+        deliveryFee,
+        total
+      };
+
+      const order = await orderService.createOrder(orderData);
+      dispatch({ type: 'SET_CURRENT_ORDER', payload: order });
+      dispatch({ type: 'CLEAR_CART' });
+      
+      // Navigate to order tracking
+      navigate(`/order-tracking/${order.id}`);
+    } catch (error) {
+      console.error('Order creation failed:', error);
+      alert('Failed to create order. Please try again.');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
   return (
     <div className="checkout-page">
@@ -36,15 +76,15 @@ const CheckoutPage = () => {
 
         <section className="order-summary-section">
           <h3>ORDER SUMMARY</h3>
-          {orderSummary.items.map((item, index) => (
+          {state.cart.map((item, index) => (
             <div key={index} className="summary-item">
-              <span>{item.name}</span>
-              <span>${item.price.toFixed(2)} ×{item.quantity}</span>
+              <span>{item.name} ×{item.quantity}</span>
+              <span>${(parseFloat(item.price) * item.quantity).toFixed(2)}</span>
             </div>
           ))}
           <div className="summary-item">
             <span>Delivery Fee</span>
-            <span>${orderSummary.deliveryFee}</span>
+            <span>${deliveryFee.toFixed(2)}</span>
           </div>
           <div className="summary-item total">
             <span>Total</span>
@@ -102,13 +142,22 @@ const CheckoutPage = () => {
         <section className="delivery-section">
           <h3>DELIVERY ADDRESS</h3>
           <div className="address-input">
-            <input type="text" placeholder="Enter your delivery address" />
+            <input 
+              type="text" 
+              placeholder="Enter your delivery address"
+              value={deliveryAddress}
+              onChange={(e) => setDeliveryAddress(e.target.value)}
+            />
             <span className="location-icon">📍</span>
           </div>
         </section>
 
-        <button className="confirm-pay-btn">
-          ✓ Confirm & Pay
+        <button 
+          className="confirm-pay-btn"
+          onClick={handleConfirmOrder}
+          disabled={isProcessing || state.cart.length === 0}
+        >
+          {isProcessing ? 'Processing...' : `✓ Confirm & Pay $${total.toFixed(2)}`}
         </button>
       </main>
     </div>
