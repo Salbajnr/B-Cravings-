@@ -1,21 +1,35 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useApp } from '../context/AppContext';
 
-const Header = ({ isFood = false }) => {
+const Header = ({ isFood = false, isRestaurant = false }) => {
+  const navigate = useNavigate();
+  const { state } = useApp();
+
   return (
-    <header className={isFood ? "food_header" : ""}>
-      <div className={isFood ? "logo logo2" : "logo"}>
-        {isFood && (
-          <button className="menu_btn">
-            <i className="bx bx-menu-alt-left"></i>
+    <header className={`header ${isFood ? 'food_header' : ''}`}>
+      <div className="logo logo2">
+        {(isFood || isRestaurant) && (
+          <button className="menu_btn" onClick={() => navigate(-1)}>
+            <i className="bx bx-arrow-back"></i>
           </button>
         )}
-        <h2>
-          Glovo<span><img src="./glovoimages/32x32.png" alt="" /></span>
-        </h2>
+        <Link to="/">
+          <h2>
+            B-Cravings<span><img src="/glovoimages/32x32.png" alt="" /></span>
+          </h2>
+        </Link>
       </div>
-      <Link to="/login">Login</Link>
+      
+      <div className="header-actions">
+        {state.cart.length > 0 && (
+          <Link to="/order-summary" className="cart-icon">
+            🛒 <span className="cart-count">{state.cart.length}</span>
+          </Link>
+        )}
+        <Link to="/login" className="login-btn">Login</Link>
+      </div>
     </header>
   );
 };

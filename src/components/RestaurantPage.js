@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Header from './Header';
 import { useParams } from 'react-router-dom';
-import { useApp } from './AppContext';
-import * as restaurantService from './services/restaurantService';
+import { useApp } from '../context/AppContext';
+import { restaurantService } from '../services/api';
 
 const RestaurantPage = () => {
   const { id } = useParams();
@@ -12,9 +12,9 @@ const RestaurantPage = () => {
   const [loading, setLoading] = useState(true);
 
   const reviews = [
-    { id: 1, name: "Sarah W.", review: "Excellent food, quick delivery!", rating: 5 },
-    { id: 2, name: "Alex M.", review: "Loved the dishes and friendly staff.", rating: 4 },
-    { id: 3, name: "Priya S.", review: "Great food and reasonable prices.", rating: 5 }
+    { id: 1, name: "Amina K.", review: "Excellent suya, quick delivery to Bauchi!", rating: 5 },
+    { id: 2, name: "Ibrahim M.", review: "Loved the jollof rice and pepper soup.", rating: 4 },
+    { id: 3, name: "Fatima S.", review: "Great local dishes and reasonable prices.", rating: 5 }
   ];
 
   useEffect(() => {
@@ -90,15 +90,15 @@ const RestaurantPage = () => {
               <img src={restaurant.image} alt="Restaurant" />
             </div>
             <div className="side-images">
-              <img src={restaurant.images[1]} alt="Food" />
+              <img src={`https://picsum.photos/200/150?random=${restaurant.id + 100}`} alt="Food" />
             </div>
             <div className="bottom-images">
-              <img src={restaurant.images[2]} alt="Pepperoni Pizza" />
-              <span className="image-label">Pepperoni Pizza</span>
+              <img src={`https://picsum.photos/200/150?random=${restaurant.id + 200}`} alt="Jollof Rice" />
+              <span className="image-label">Jollof Rice</span>
             </div>
             <div className="bottom-images">
-              <img src={restaurant.images[3]} alt="Pasta Carbonara" />
-              <span className="image-label">Pasta Carbonara</span>
+              <img src={`https://picsum.photos/200/150?random=${restaurant.id + 300}`} alt="Suya" />
+              <span className="image-label">Suya</span>
             </div>
           </div>
 

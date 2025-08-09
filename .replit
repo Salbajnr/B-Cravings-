@@ -4,12 +4,38 @@ modules = ["web"]
 channel = "stable-25_05"
 
 [workflows]
-runButton = "Run React App"
+runButton = "Start B-Cravings App"
 
 [[workflows.workflow]]
 name = "Run React App"
 author = 46125146
 mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm start"
+
+[[workflows.workflow]]
+name = "Install and Start"
+author = 46125146
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm install"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm start"
+
+[[workflows.workflow]]
+name = "Start B-Cravings App"
+author = 46125146
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm install"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"

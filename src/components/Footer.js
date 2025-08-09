@@ -4,49 +4,54 @@ import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
-    <footer>
+    <footer className="app-footer">
       <Link to="/">
-        <img src="./glovoimages/glovo-white.svg" alt="" />
+        <img src="/glovoimages/glovo-white.svg" alt="B-Cravings" />
       </Link>
+      
       <div className="lets">
         <h3>Let's do it together</h3>
         <div className="lets_links">
-          <a href="">Careers</a>
-          <a href="">Glovo for Partners</a>
-          <a href="">Couriers</a>
-          <a href="">Glovo Business</a>
+          <a href="#careers">Careers</a>
+          <a href="#partners">B-Cravings for Partners</a>
+          <a href="#couriers">Couriers</a>
+          <a href="#business">B-Cravings Business</a>
         </div>
       </div>
+      
       <div className="lets">
         <h3>Links of interest</h3>
         <div className="lets_links">
-          <a href="">About us</a>
-          <a href="">FAQ</a>
-          <a href="">Glovo Prime</a>
-          <a href="">Security</a>
+          <a href="#about">About us</a>
+          <a href="#faq">FAQ</a>
+          <a href="#prime">B-Cravings Prime</a>
+          <a href="#security">Security</a>
         </div>
       </div>
+      
       <div className="lets">
         <h3>Follow us</h3>
         <div className="lets_links">
-          <a href="">Facebook</a>
-          <a href="">Twitter</a>
-          <a href="">Instagram</a>
+          <a href="#facebook">Facebook</a>
+          <a href="#twitter">Twitter</a>
+          <a href="#instagram">Instagram</a>
         </div>
       </div>
+
       <div className="footer_btns">
         <button className="download">
-          <img src="./glovoimages/download-button-new (1).svg" alt="" />
+          <img src="/glovoimages/download-button-new (1).svg" alt="Download" />
         </button>
         <button className="download">
-          <img src="./glovoimages/download-button-new.svg" alt="" />
+          <img src="/glovoimages/download-button-new.svg" alt="Download" />
         </button>
       </div>
+      
       <div className="last_links">
-        <a href="">terms & conditions</a>
-        <a href="">privacy policy</a>
-        <a href="">cookies policy</a>
-        <a href="">compliance</a>
+        <a href="#terms">Terms & Conditions</a>
+        <a href="#privacy">Privacy Policy</a>
+        <a href="#cookies">Cookies Policy</a>
+        <a href="#compliance">Compliance</a>
       </div>
     </footer>
   );

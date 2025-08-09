@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AppProvider } from './context/AppContext';
 import HomePage from './components/HomePage';
 import FoodPage from './components/FoodPage';
@@ -12,26 +12,24 @@ import LoginPage from './components/LoginPage';
 import './index.css';
 
 const BottomNavigation = () => {
-  const location = useLocation();
-  
   return (
     <nav className="bottom-nav">
-      <Link to="/" className={`nav-item ${location.pathname === '/' ? 'active' : ''}`}>
-        <span className="nav-icon">🏠</span>
+      <a href="/" className="nav-item active">
+        <div className="nav-icon">🏠</div>
         <span>Home</span>
-      </Link>
-      <Link to="/food" className={`nav-item ${location.pathname === '/food' ? 'active' : ''}`}>
-        <span className="nav-icon">🍽️</span>
+      </a>
+      <a href="/food" className="nav-item">
+        <div className="nav-icon">🍔</div>
         <span>Food</span>
-      </Link>
-      <Link to="/order-summary" className={`nav-item ${location.pathname === '/order-summary' ? 'active' : ''}`}>
-        <span className="nav-icon">📋</span>
-        <span>Orders</span>
-      </Link>
-      <Link to="/login" className={`nav-item ${location.pathname === '/login' ? 'active' : ''}`}>
-        <span className="nav-icon">👤</span>
+      </a>
+      <a href="/order-summary" className="nav-item">
+        <div className="nav-icon">🛒</div>
+        <span>Cart</span>
+      </a>
+      <a href="/login" className="nav-item">
+        <div className="nav-icon">👤</div>
         <span>Profile</span>
-      </Link>
+      </a>
     </nav>
   );
 };
