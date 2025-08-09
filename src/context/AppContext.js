@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 
 const AppContext = createContext();
@@ -17,13 +16,13 @@ function appReducer(state, action) {
   switch (action.type) {
     case 'SET_LOADING':
       return { ...state, loading: action.payload };
-    
+
     case 'SET_ERROR':
       return { ...state, error: action.payload, loading: false };
-    
+
     case 'SET_RESTAURANTS':
       return { ...state, restaurants: action.payload, loading: false };
-    
+
     case 'ADD_TO_CART':
       const existingItem = state.cart.find(item => item.id === action.payload.id);
       if (existingItem) {
@@ -40,16 +39,16 @@ function appReducer(state, action) {
         ...state,
         cart: [...state.cart, { ...action.payload, quantity: 1 }]
       };
-    
+
     case 'REMOVE_FROM_CART':
       return {
         ...state,
         cart: state.cart.filter(item => item.id !== action.payload)
       };
-    
+
     case 'CLEAR_CART':
       return { ...state, cart: [] };
-    
+
     case 'UPDATE_CART_QUANTITY':
       return {
         ...state,
@@ -59,16 +58,16 @@ function appReducer(state, action) {
             : item
         )
       };
-    
+
     case 'SET_USER':
       return { ...state, user: action.payload };
-    
+
     case 'SET_SEARCH_QUERY':
       return { ...state, searchQuery: action.payload };
-    
+
     case 'SET_CURRENT_ORDER':
       return { ...state, currentOrder: action.payload };
-    
+
     default:
       return state;
   }
