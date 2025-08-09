@@ -1,3 +1,217 @@
 
-@import url('../glovo.css');
-@import url('./components/styles.css');
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  line-height: 1.6;
+  color: #333;
+  background-color: #f8f9fa;
+}
+
+.App {
+  min-height: 100vh;
+}
+
+/* Loading */
+.loading, .loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  font-size: 1.2rem;
+  color: #666;
+}
+
+/* Food Page */
+.food-page {
+  min-height: 100vh;
+  background: #f8f9fa;
+}
+
+.search-section {
+  padding: 1rem;
+  background: white;
+  border-bottom: 1px solid #eee;
+}
+
+.food-categories {
+  display: flex;
+  gap: 0.5rem;
+  padding: 1rem;
+  overflow-x: auto;
+  background: white;
+  border-bottom: 1px solid #eee;
+}
+
+.category-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 80px;
+}
+
+.category-btn:hover,
+.category-btn.active {
+  background: #00a082;
+  color: white;
+  border-color: #00a082;
+}
+
+.category-icon {
+  font-size: 1.5rem;
+}
+
+.restaurants-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.no-results {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+}
+
+/* Order Summary */
+.order-summary-page {
+  min-height: 100vh;
+  background: #f8f9fa;
+}
+
+.order-summary-main {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.cart-items {
+  background: white;
+  border-radius: 8px;
+  margin: 1rem 0;
+  overflow: hidden;
+}
+
+.cart-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.cart-item:last-child {
+  border-bottom: none;
+}
+
+.item-info h3 {
+  margin-bottom: 0.25rem;
+}
+
+.item-price {
+  color: #666;
+  font-weight: bold;
+}
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.quantity-controls button {
+  width: 30px;
+  height: 30px;
+  border: 1px solid #ddd;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.quantity-controls button:hover {
+  background: #f0f0f0;
+}
+
+.remove-btn {
+  background: #ff4444 !important;
+  color: white !important;
+  border-color: #ff4444 !important;
+}
+
+.order-summary {
+  background: white;
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+}
+
+.summary-row.total {
+  border-top: 2px solid #eee;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.checkout-btn {
+  display: block;
+  width: 100%;
+  padding: 1rem;
+  background: #00a082;
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: bold;
+  margin-top: 1rem;
+  transition: background 0.2s;
+}
+
+.checkout-btn:hover {
+  background: #008a6f;
+}
+
+.empty-cart {
+  text-align: center;
+  padding: 2rem;
+  background: white;
+  border-radius: 8px;
+  margin: 2rem;
+}
+
+.browse-btn {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.75rem 1.5rem;
+  background: #00a082;
+  color: white;
+  text-decoration: none;
+  border-radius: 25px;
+  transition: background 0.2s;
+}
+
+.browse-btn:hover {
+  background: #008a6f;
+}

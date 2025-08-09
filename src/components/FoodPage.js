@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Header from './Header';
-import Footer from './Footer';
 import StoreCard from './StoreCard';
+import SearchForm from './SearchForm';
 
 const FoodPage = () => {
   const [restaurants, setRestaurants] = useState([]);
@@ -44,10 +44,34 @@ const FoodPage = () => {
         deliveryFee: `₦${(Math.random() * 1000 + 500).toFixed(0)}`,
         isPromoted: Math.random() > 0.7
       }));
-
+      
       setRestaurants(restaurantData);
     } catch (error) {
       console.error('Failed to load restaurants:', error);
+      // Fallback to mock data
+      const mockData = [
+        {
+          id: 1,
+          name: "Mama's Kitchen",
+          rating: "4.5",
+          image: "/glovoimages/7f883ec1cf82cee10668bff77ff6d5448bba9ede18c56d9d74afcd9c8a77.jpeg",
+          cuisine: "Nigerian",
+          deliveryTime: "25-35 min",
+          deliveryFee: "₦200",
+          isPromoted: true
+        },
+        {
+          id: 2,
+          name: "Suya Palace",
+          rating: "4.7",
+          image: "/glovoimages/c9efcd63fa9333697bfeadd414184667f1056e0b0e82ba64c8feb6ea2b8a.jpeg",
+          cuisine: "Grilled",
+          deliveryTime: "20-30 min",
+          deliveryFee: "₦150",
+          isPromoted: false
+        }
+      ];
+      setRestaurants(mockData);
     }
     setLoading(false);
   };
@@ -57,11 +81,11 @@ const FoodPage = () => {
 
     if (activeFilter !== 'All') {
       filtered = filtered.filter(restaurant => 
-        restaurant.cuisine.toLowerCase() === activeFilter.toLowerCase()
+        restaurant.cuisine.toLowerCase().includes(activeFilter.toLowerCase())
       );
     }
 
-    if (searchQuery) {
+    if (searchQuery.trim()) {
       filtered = filtered.filter(restaurant =>
         restaurant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         restaurant.cuisine.toLowerCase().includes(searchQuery.toLowerCase())
@@ -71,50 +95,54 @@ const FoodPage = () => {
     setFilteredRestaurants(filtered);
   };
 
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+  };
+
+  if (loading) {
+    return (
+      <div className="food-page">
+        <Header />
+        <div className="loading">Loading restaurants...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="food-page">
-      <Header isFood={true} />
+      <Header />
       
-      <div className="formbcc">
-        <div className="search_what">
-          <i className="bx bx-search"></i>
-          <input 
-            type="text" 
-            placeholder="What can we get you"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
+      <div className="search-section">
+        <SearchForm onSearch={handleSearch} placeholder="What can we get you?" />
       </div>
-      
-      <div className="food_category">
-        {categories.map((category, index) => (
-          <div 
-            key={index} 
-            className={`f_cat ${activeFilter === category.name ? 'active' : ''}`}
+
+      <div className="food-categories">
+        {categories.map(category => (
+          <button
+            key={category.name}
+            className={`category-btn ${activeFilter === category.name ? 'active' : ''}`}
             onClick={() => setActiveFilter(category.name)}
           >
-            <div className="imgf">
-              <span style={{ fontSize: '24px' }}>{category.icon}</span>
-            </div>
-            <p>{category.name}</p>
-          </div>
+            <span className="category-icon">{category.icon}</span>
+            <span>{category.name}</span>
+          </button>
         ))}
       </div>
 
-      <div className="restaurants-container">
-        {loading ? (
-          <div className="loading-spinner">Loading restaurants...</div>
+      <div className="restaurants-grid">
+        {filteredRestaurants.length > 0 ? (
+          filteredRestaurants.map(restaurant => (
+            <StoreCard
+              key={restaurant.id}
+              {...restaurant}
+            />
+          ))
         ) : (
-          <div className="restaurant-grid">
-            {filteredRestaurants.map(restaurant => (
-              <StoreCard key={restaurant.id} {...restaurant} />
-            ))}
+          <div className="no-results">
+            <p>No restaurants found matching your criteria.</p>
           </div>
         )}
       </div>
-
-      <Footer />
     </div>
   );
 };

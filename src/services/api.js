@@ -1,68 +1,84 @@
 
-const BASE_URL = 'https://jsonplaceholder.typicode.com'; // Mock API for demo
-const FOOD_API = 'https://www.themealdb.com/api/json/v1/1'; // Real food API
+import axios from 'axios';
 
-// Restaurant data service
+const API_BASE_URL = 'https://jsonplaceholder.typicode.com';
+
+// Mock data for Bauchi, Nigeria
+const mockRestaurants = [
+  {
+    id: 1,
+    name: "Mama's Kitchen",
+    cuisine: "Nigerian",
+    rating: 4.5,
+    deliveryTime: "25-35 min",
+    deliveryFee: "₦200",
+    image: "/glovoimages/7f883ec1cf82cee10668bff77ff6d5448bba9ede18c56d9d74afcd9c8a77.jpeg",
+    location: "Bauchi Central",
+    menu: [
+      { id: 1, name: "Jollof Rice", price: 1500, category: "Main Course", description: "Delicious Nigerian jollof rice" },
+      { id: 2, name: "Fried Rice", price: 1800, category: "Main Course", description: "Tasty fried rice with vegetables" },
+      { id: 3, name: "Pepper Soup", price: 1200, category: "Soup", description: "Spicy Nigerian pepper soup" }
+    ]
+  },
+  {
+    id: 2,
+    name: "Suya Palace",
+    cuisine: "Grilled",
+    rating: 4.7,
+    deliveryTime: "20-30 min",
+    deliveryFee: "₦150",
+    image: "/glovoimages/c9efcd63fa9333697bfeadd414184667f1056e0b0e82ba64c8feb6ea2b8a.jpeg",
+    location: "Yelwa Road",
+    menu: [
+      { id: 1, name: "Beef Suya", price: 2000, category: "Grilled", description: "Grilled beef with spices" },
+      { id: 2, name: "Chicken Suya", price: 2500, category: "Grilled", description: "Grilled chicken with spices" },
+      { id: 3, name: "Fish Suya", price: 3000, category: "Grilled", description: "Grilled fish with spices" }
+    ]
+  }
+];
+
 export const restaurantService = {
-  async getRestaurants() {
+  getAll: async () => {
     try {
-      const response = await fetch(`${BASE_URL}/posts`);
-      const posts = await response.json();
-      
-      // Transform posts into restaurant data
-      return posts.slice(0, 10).map(post => ({
-        id: post.id,
-        name: `Restaurant ${post.id}`,
-        cuisine: ['Italian', 'Chinese', 'Mexican', 'Indian', 'American'][Math.floor(Math.random() * 5)],
-        rating: (3.5 + Math.random() * 1.5).toFixed(1),
-        deliveryTime: `${20 + Math.floor(Math.random() * 30)} min`,
-        image: `https://picsum.photos/300/200?random=${post.id}`,
-        description: post.body.substring(0, 100) + '...',
-        isOpen: Math.random() > 0.2
-      }));
+      return mockRestaurants;
     } catch (error) {
       console.error('Error fetching restaurants:', error);
-      return [];
+      return mockRestaurants;
     }
   },
 
-  async getRestaurantMenu(restaurantId) {
+  getById: async (id) => {
     try {
-      const response = await fetch(`${FOOD_API}/search.php?s=chicken`);
-      const data = await response.json();
-      
-      return data.meals?.slice(0, 8).map(meal => ({
-        id: meal.idMeal,
-        name: meal.strMeal,
-        description: meal.strInstructions.substring(0, 100) + '...',
-        price: (2000 + Math.random() * 8000).toFixed(0),
-        image: meal.strMealThumb,
-        category: meal.strCategory
-      })) || [];
+      const restaurant = mockRestaurants.find(r => r.id === parseInt(id));
+      return restaurant || mockRestaurants[0];
     } catch (error) {
-      console.error('Error fetching menu:', error);
-      return [];
+      console.error('Error fetching restaurant:', error);
+      return mockRestaurants[0];
+    }
+  },
+
+  search: async (query) => {
+    try {
+      return mockRestaurants.filter(restaurant => 
+        restaurant.name.toLowerCase().includes(query.toLowerCase()) ||
+        restaurant.cuisine.toLowerCase().includes(query.toLowerCase())
+      );
+    } catch (error) {
+      console.error('Error searching restaurants:', error);
+      return mockRestaurants;
     }
   }
 };
 
-// Order tracking service
 export const orderService = {
-  async createOrder(orderData) {
+  create: async (orderData) => {
     try {
-      const response = await fetch(`${BASE_URL}/posts`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(orderData)
-      });
-      const order = await response.json();
-      
+      const orderId = Date.now().toString();
       return {
-        id: order.id,
+        id: orderId,
+        ...orderData,
         status: 'confirmed',
-        estimatedDelivery: new Date(Date.now() + 30 * 60000).toISOString(),
-        items: orderData.items,
-        total: orderData.total
+        estimatedDelivery: new Date(Date.now() + 30 * 60000).toISOString()
       };
     } catch (error) {
       console.error('Error creating order:', error);
@@ -70,34 +86,17 @@ export const orderService = {
     }
   },
 
-  async trackOrder(orderId) {
-    const statuses = ['confirmed', 'preparing', 'on-route', 'delivered'];
-    const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
-    
-    return {
-      id: orderId,
-      status: randomStatus,
-      estimatedDelivery: new Date(Date.now() + 20 * 60000).toISOString(),
-      driverLocation: {
-        lat: -0.3476 + (Math.random() - 0.5) * 0.01,
-        lng: 32.5825 + (Math.random() - 0.5) * 0.01
-      }
-    };
-  }
-};
-
-// Search service
-export const searchService = {
-  async searchRestaurants(query) {
+  trackOrder: async (orderId) => {
     try {
-      const restaurants = await restaurantService.getRestaurants();
-      return restaurants.filter(restaurant => 
-        restaurant.name.toLowerCase().includes(query.toLowerCase()) ||
-        restaurant.cuisine.toLowerCase().includes(query.toLowerCase())
-      );
+      return {
+        id: orderId,
+        status: 'preparing',
+        estimatedDelivery: new Date(Date.now() + 25 * 60000).toISOString(),
+        driverLocation: { lat: 10.3158, lng: 9.8442 }
+      };
     } catch (error) {
-      console.error('Error searching restaurants:', error);
-      return [];
+      console.error('Error tracking order:', error);
+      throw error;
     }
   }
 };

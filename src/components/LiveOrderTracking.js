@@ -1,8 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
 
-import React, { useState, useEffect } from 'react';
-
 const LiveOrderTracking = ({ orderId }) => {
   const [orderStatus, setOrderStatus] = useState('confirmed');
   const [estimatedTime, setEstimatedTime] = useState(25);
@@ -43,16 +41,17 @@ const LiveOrderTracking = ({ orderId }) => {
         </p>
       </div>
 
-      <div className="status-progress">
+      <div className="progress-timeline">
         {statusSteps.map((step, index) => (
-          <div 
-            key={step.key} 
-            className={`status-step ${index <= getCurrentStepIndex() ? 'completed' : ''}`}
-          >
+          <div key={step.key} className={`timeline-step ${
+            index <= getCurrentStepIndex() ? 'completed' : ''
+          } ${index === getCurrentStepIndex() ? 'active' : ''}`}>
             <div className="step-icon">{step.icon}</div>
-            <div className="step-label">{step.label}</div>
+            <div className="step-text">{step.label}</div>
             {index < statusSteps.length - 1 && (
-              <div className={`step-line ${index < getCurrentStepIndex() ? 'completed' : ''}`} />
+              <div className={`step-connector ${
+                index < getCurrentStepIndex() ? 'completed' : ''
+              }`}></div>
             )}
           </div>
         ))}
@@ -60,14 +59,11 @@ const LiveOrderTracking = ({ orderId }) => {
 
       {orderStatus === 'on_the_way' && (
         <div className="driver-info">
-          <h3>Your Driver</h3>
-          <div className="driver-card">
-            <img src="https://ui-avatars.com/api/?name=John+Doe" alt="Driver" />
-            <div>
-              <p><strong>John Doe</strong></p>
-              <p>⭐ 4.8 rating</p>
-            </div>
-            <button className="call-driver">📞 Call</button>
+          <h3>🚗 Driver Location</h3>
+          <p>Your driver is nearby and will arrive shortly!</p>
+          <div className="map-placeholder">
+            <p>📍 Live tracking map would be here</p>
+            <small>Lat: {driverLocation.lat}, Lng: {driverLocation.lng}</small>
           </div>
         </div>
       )}
