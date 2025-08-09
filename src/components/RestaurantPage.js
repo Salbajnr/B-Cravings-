@@ -131,6 +131,7 @@ const RestaurantPage = () => {
                 >
                   🛒 Add
                 </button>
+                <span className="item-price">₦{item.price}</span>
               </div>
             ))}
           </div>

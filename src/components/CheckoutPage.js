@@ -17,7 +17,7 @@ const CheckoutPage = () => {
   const [deliveryAddress, setDeliveryAddress] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const deliveryFee = 2.99;
+  const deliveryFee = 1500;
   const subtotal = state.cart.reduce((sum, item) => sum + (parseFloat(item.price) * item.quantity), 0);
   const total = subtotal + deliveryFee;
 
@@ -79,16 +79,16 @@ const CheckoutPage = () => {
           {state.cart.map((item, index) => (
             <div key={index} className="summary-item">
               <span>{item.name} ×{item.quantity}</span>
-              <span>${(parseFloat(item.price) * item.quantity).toFixed(2)}</span>
+              <span>₦{(parseFloat(item.price) * item.quantity).toFixed(0)}</span>
             </div>
           ))}
           <div className="summary-item">
             <span>Delivery Fee</span>
-            <span>${deliveryFee.toFixed(2)}</span>
+            <span>₦{deliveryFee.toFixed(0)}</span>
           </div>
           <div className="summary-item total">
             <span>Total</span>
-            <span>${total.toFixed(2)}</span>
+            <span>₦{total.toFixed(0)}</span>
           </div>
         </section>
 
@@ -157,7 +157,7 @@ const CheckoutPage = () => {
           onClick={handleConfirmOrder}
           disabled={isProcessing || state.cart.length === 0}
         >
-          {isProcessing ? 'Processing...' : `✓ Confirm & Pay $${total.toFixed(2)}`}
+          {isProcessing ? 'Processing...' : `✓ Confirm & Pay ₦${total.toFixed(0)}`}
         </button>
       </main>
     </div>

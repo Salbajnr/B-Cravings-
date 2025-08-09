@@ -41,7 +41,7 @@ const FoodPage = () => {
         image: `https://picsum.photos/300/200?random=${user.id + 200}`,
         cuisine: categories[Math.floor(Math.random() * (categories.length - 1)) + 1].name,
         deliveryTime: `${Math.floor(Math.random() * 20 + 15)}-${Math.floor(Math.random() * 15 + 30)} min`,
-        deliveryFee: `$${(Math.random() * 3 + 1).toFixed(2)}`,
+        deliveryFee: `₦${(Math.random() * 1000 + 500).toFixed(0)}`,
         isPromoted: Math.random() > 0.7
       }));
 

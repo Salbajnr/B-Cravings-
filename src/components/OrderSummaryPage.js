@@ -7,7 +7,7 @@ import Header from './Header';
 const OrderSummaryPage = () => {
   const { state, dispatch } = useApp();
   
-  const deliveryFee = 2.99;
+  const deliveryFee = 1500;
   const subtotal = state.cart.reduce((sum, item) => sum + (parseFloat(item.price) * item.quantity), 0);
   const total = subtotal + deliveryFee;
 
@@ -66,7 +66,7 @@ const OrderSummaryPage = () => {
                   />
                   <div className="item-info">
                     <h4>{item.name}</h4>
-                    <p>${parseFloat(item.price).toFixed(2)} each</p>
+                    <p>₦{parseFloat(item.price).toFixed(0)} each</p>
                     <div className="quantity-controls">
                       <button onClick={() => updateQuantity(item.id, item.quantity - 1)}>-</button>
                       <span>{item.quantity}</span>
@@ -88,21 +88,21 @@ const OrderSummaryPage = () => {
         <section className="order-summary">
           <div className="summary-row">
             <span>Subtotal</span>
-            <span>${subtotal.toFixed(2)}</span>
+            <span>₦{subtotal.toFixed(0)}</span>
           </div>
           <div className="summary-row">
             <span>Delivery</span>
-            <span>${deliveryFee.toFixed(2)}</span>
+            <span>₦{deliveryFee.toFixed(0)}</span>
           </div>
           <div className="summary-row total">
             <span>Total</span>
-            <span>${total.toFixed(2)}</span>
+            <span>₦{total.toFixed(0)}</span>
           </div>
         </section>
 
         {state.cart.length > 0 && (
           <Link to="/checkout" className="checkout-btn">
-            🛒 Checkout - ${total.toFixed(2)}
+            🛒 Checkout - ₦{total.toFixed(0)}
           </Link>
         )}
       </main>

@@ -35,7 +35,7 @@ export const restaurantService = {
         id: meal.idMeal,
         name: meal.strMeal,
         description: meal.strInstructions.substring(0, 100) + '...',
-        price: (8.99 + Math.random() * 15).toFixed(2),
+        price: (2000 + Math.random() * 8000).toFixed(0),
         image: meal.strMealThumb,
         category: meal.strCategory
       })) || [];
