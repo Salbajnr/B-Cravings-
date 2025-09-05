@@ -6,7 +6,7 @@ const Footer = () => {
   return (
     <footer className="app-footer">
       <Link to="/">
-        <img src="/glovoimages/glovo-white.svg" alt="B-Cravings" />
+        <img src="/bcravings-images/b-cravings-white.svg" alt="B-Cravings" />
       </Link>
       
       <div className="lets">
@@ -40,10 +40,10 @@ const Footer = () => {
 
       <div className="footer_btns">
         <button className="download">
-          <img src="/glovoimages/download-button-new (1).svg" alt="Download" />
+          <img src="/bcravings-images/download-button-new (1).svg" alt="Download" />
         </button>
         <button className="download">
-          <img src="/glovoimages/download-button-new.svg" alt="Download" />
+          <img src="/bcravings-images/download-button-new.svg" alt="Download" />
         </button>
       </div>
       

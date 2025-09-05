@@ -17,7 +17,7 @@ const Header = ({ isFood = false, isRestaurant = false }) => {
         )}
         <Link to="/">
           <h2>
-            B-Cravings<span><img src="/glovoimages/32x32.png" alt="" /></span>
+            B-Cravings<span><img src="/bcravings-images/32x32.png" alt="" /></span>
           </h2>
         </Link>
       </div>

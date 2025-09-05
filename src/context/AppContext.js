@@ -78,7 +78,7 @@ export const AppProvider = ({ children }) => {
 
   // Load cart from localStorage on app start
   useEffect(() => {
-    const savedCart = localStorage.getItem('glovo-cart');
+    const savedCart = localStorage.getItem('bcravings-cart');
     if (savedCart) {
       const cartItems = JSON.parse(savedCart);
       cartItems.forEach(item => {
@@ -89,7 +89,7 @@ export const AppProvider = ({ children }) => {
 
   // Save cart to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem('glovo-cart', JSON.stringify(state.cart));
+    localStorage.setItem('bcravings-cart', JSON.stringify(state.cart));
   }, [state.cart]);
 
   return (

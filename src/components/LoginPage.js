@@ -58,7 +58,7 @@ const LoginPage = () => {
 
   const handleGuestLogin = () => {
     localStorage.setItem('user', JSON.stringify({
-      email: 'guest@glovo.com',
+      email: 'guest@bcravings.com',
       name: 'Guest User'
     }));
     navigate('/');
@@ -71,7 +71,7 @@ const LoginPage = () => {
       <main className="login-content">
         <div className="login-container">
           <div className="login-header">
-            <img src="./glovoimages/logo_auth.svg" alt="Glovo" className="login-logo" />
+            <img src="./bcravings-images/logo_auth.svg" alt="B-Cravings" className="login-logo" />
             <h1>Welcome back</h1>
             <p>Sign in to your account</p>
           </div>

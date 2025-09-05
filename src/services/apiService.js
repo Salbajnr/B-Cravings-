@@ -12,7 +12,7 @@ const mockRestaurants = [
     rating: 4.5,
     deliveryTime: "25-35 min",
     deliveryFee: 200,
-    image: "/glovoimages/7f883ec1cf82cee10668bff77ff6d5448bba9ede18c56d9d74afcd9c8a77.jpeg",
+    image: "/bcravings-images/7f883ec1cf82cee10668bff77ff6d5448bba9ede18c56d9d74afcd9c8a77.jpeg",
     location: "Bauchi Central",
     menu: [
       { id: 1, name: "Jollof Rice", price: 1500, category: "Main Course" },
@@ -27,7 +27,7 @@ const mockRestaurants = [
     rating: 4.7,
     deliveryTime: "20-30 min",
     deliveryFee: 150,
-    image: "/glovoimages/c9efcd63fa9333697bfeadd414184667f1056e0b0e82ba64c8feb6ea2b8a.jpeg",
+    image: "/bcravings-images/c9efcd63fa9333697bfeadd414184667f1056e0b0e82ba64c8feb6ea2b8a.jpeg",
     location: "Yelwa Road",
     menu: [
       { id: 1, name: "Beef Suya", price: 2000, category: "Grilled" },

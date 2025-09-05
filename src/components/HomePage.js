@@ -92,7 +92,7 @@ const HomePage = () => {
               <div className="blob-menu__content">
                 <div className="blob-menu__icon">
                   <img
-                    src="./glovoimages/cc38634d7f470f25c61bb209899f12a44032cb0251409b4cd75368da5c88.png"
+                    src="./bcravings-images/cc38634d7f470f25c61bb209899f12a44032cb0251409b4cd75368da5c88.png"
                     alt="Shopping bags icon"
                   />
                 </div>
@@ -104,7 +104,7 @@ const HomePage = () => {
               <div className="blob-menu__content">
                 <div className="blob-menu__icon">
                   <img
-                    src="./glovoimages/6590ca182c60df74bfef8aa3a427f17c50a32824bc9979e4b5d5a40dc5a8.png"
+                    src="./bcravings-images/6590ca182c60df74bfef8aa3a427f17c50a32824bc9979e4b5d5a40dc5a8.png"
                     alt="Shopping cart icon"
                   />
                 </div>
@@ -117,7 +117,7 @@ const HomePage = () => {
               <div className="blob-menu__content">
                 <div className="blob-menu__icon">
                   <img
-                    src="./glovoimages/3ec9bff5a4a85485922e6c6f74de529bc7981ac30e5766e8a8648c7d3f28.png"
+                    src="./bcravings-images/3ec9bff5a4a85485922e6c6f74de529bc7981ac30e5766e8a8648c7d3f28.png"
                     alt="Food icon"
                   />
                 </div>
@@ -130,7 +130,7 @@ const HomePage = () => {
               <div className="blob-menu__content">
                 <div className="blob-menu__icon">
                   <img
-                    src="./glovoimages/abe0e6d60c9e6e62d73ede9d1eec870dac15283d32b5aeee41045402e466.png"
+                    src="./bcravings-images/abe0e6d60c9e6e62d73ede9d1eec870dac15283d32b5aeee41045402e466.png"
                     alt="Pharmacy icon"
                   />
                 </div>
@@ -142,7 +142,7 @@ const HomePage = () => {
               <div className="blob-menu__content">
                 <div className="blob-menu__icon">
                   <img
-                    src="./glovoimages/c662b1ad74dc7c385a968aacf39778c327509a9d4e3e3d060a420c9c293d.png"
+                    src="./bcravings-images/c662b1ad74dc7c385a968aacf39778c327509a9d4e3e3d060a420c9c293d.png"
                     alt="Courier icon"
                   />
                 </div>
@@ -183,7 +183,7 @@ const HomePage = () => {
 
         <div className="top_category">
           <div className="top_svg">
-            <img src="./glovoimages/cities.svg" alt="" />
+            <img src="./bcravings-images/cities.svg" alt="" />
           </div>
           <h1>Top Categories in Kampala</h1>
           <div className="top_bottons">
@@ -197,35 +197,35 @@ const HomePage = () => {
 
         <div className="together">
           <div className="together_svg">
-            <img src="./glovoimages/together-opt.svg" alt="" />
+            <img src="./bcravings-images/together-opt.svg" alt="" />
           </div>
           <h1>Let's do it together</h1>
           <div className="together_cards">
             <div className="together_card">
               <div className="img_togther">
-                <img src="./glovoimages/rider-image-opt.png" alt="" />
+                <img src="./bcravings-images/rider-image-opt.png" alt="" />
               </div>
               <h2>Become a rider</h2>
               <p>
                 Enjoy flexibility, freedom and competitive earnings by delivering
-                through Glovo.
+                through B-Cravings.
               </p>
-              <button className="glovo_together">Register here</button>
+              <button className="bcravings_together">Register here</button>
             </div>
             <div className="together_card">
               <div className="img_togther">
-                <img src="./glovoimages/partners-image-opt.png" alt="" />
+                <img src="./bcravings-images/partners-image-opt.png" alt="" />
               </div>
               <h2>Become a partner</h2>
               <p>
                 Grow your business and reach more customers by partnering with
-                Glovo.
+                B-Cravings.
               </p>
-              <button className="glovo_together">Register here</button>
+              <button className="bcravings_together">Register here</button>
             </div>
             <div className="together_card">
               <div className="img_togther">
-                <img src="./glovoimages/careers-image-opt.png" alt="" />
+                <img src="./bcravings-images/careers-image-opt.png" alt="" />
               </div>
               <h2>Join our team</h2>
               <p>
