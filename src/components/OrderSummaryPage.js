@@ -1,42 +1,57 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { useApp } from '../context/AppContext';
+import { Link, useNavigate } from 'react-router-dom';
 import Header from './Header';
+import { useApp } from '../context/AppContext';
 
 const OrderSummaryPage = () => {
   const { state, dispatch } = useApp();
+  const navigate = useNavigate();
 
-  const subtotal = state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const deliveryFee = 200;
-  const total = subtotal + deliveryFee;
-
-  const updateQuantity = (itemId, newQuantity) => {
+  const updateQuantity = (itemId, restaurantId, newQuantity) => {
     if (newQuantity === 0) {
-      dispatch({ type: 'REMOVE_FROM_CART', payload: itemId });
+      dispatch({ 
+        type: 'REMOVE_FROM_CART', 
+        payload: { id: itemId, restaurantId } 
+      });
     } else {
       dispatch({ 
         type: 'UPDATE_CART_QUANTITY', 
-        payload: { id: itemId, quantity: newQuantity } 
+        payload: { id: itemId, restaurantId, quantity: newQuantity } 
       });
     }
   };
 
-  const removeItem = (itemId) => {
-    dispatch({ type: 'REMOVE_FROM_CART', payload: itemId });
+  const removeItem = (itemId, restaurantId) => {
+    dispatch({ 
+      type: 'REMOVE_FROM_CART', 
+      payload: { id: itemId, restaurantId } 
+    });
+  };
+
+  const calculateSubtotal = () => {
+    return state.cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+  };
+
+  const deliveryFee = 200;
+  const serviceFee = Math.round(calculateSubtotal() * 0.05);
+  const total = calculateSubtotal() + deliveryFee + serviceFee;
+
+  const handleCheckout = () => {
+    navigate('/checkout');
   };
 
   if (state.cart.length === 0) {
     return (
       <div className="order-summary-page">
         <Header />
-        <main className="empty-cart">
+        <div className="empty-cart">
           <h2>Your cart is empty</h2>
-          <p>Add some delicious items to get started!</p>
+          <p>Add some delicious items from our restaurants!</p>
           <Link to="/food" className="browse-btn">
             Browse Restaurants
           </Link>
-        </main>
+        </div>
       </div>
     );
   }
@@ -44,56 +59,72 @@ const OrderSummaryPage = () => {
   return (
     <div className="order-summary-page">
       <Header />
+      
       <main className="order-summary-main">
-        <h1>Your Order</h1>
+        <h1>Order Summary</h1>
         
-        <section className="cart-items">
+        <div className="cart-items">
           {state.cart.map(item => (
-            <div key={item.id} className="cart-item">
+            <div key={`${item.id}-${item.restaurantId}`} className="cart-item">
               <div className="item-info">
-                <h3>{item.name}</h3>
-                <p className="item-price">₦{item.price}</p>
+                <img src={item.image} alt={item.name} className="item-image" />
+                <div>
+                  <h3>{item.name}</h3>
+                  <p className="item-description">{item.description}</p>
+                  <span className="item-price">₦{item.price}</span>
+                </div>
               </div>
               
               <div className="quantity-controls">
-                <button onClick={() => updateQuantity(item.id, item.quantity - 1)}>
+                <button 
+                  onClick={() => updateQuantity(item.id, item.restaurantId, item.quantity - 1)}
+                  disabled={item.quantity <= 1}
+                >
                   -
                 </button>
-                <span>{item.quantity}</span>
-                <button onClick={() => updateQuantity(item.id, item.quantity + 1)}>
+                <span className="quantity">{item.quantity}</span>
+                <button 
+                  onClick={() => updateQuantity(item.id, item.restaurantId, item.quantity + 1)}
+                >
                   +
                 </button>
                 <button 
-                  onClick={() => removeItem(item.id)}
                   className="remove-btn"
+                  onClick={() => removeItem(item.id, item.restaurantId)}
                 >
                   🗑️
                 </button>
               </div>
             </div>
           ))}
-        </section>
+        </div>
 
-        <section className="order-summary">
+        <div className="order-summary">
           <div className="summary-row">
             <span>Subtotal</span>
-            <span>₦{subtotal.toFixed(0)}</span>
+            <span>₦{calculateSubtotal().toLocaleString()}</span>
           </div>
           <div className="summary-row">
-            <span>Delivery</span>
-            <span>₦{deliveryFee.toFixed(0)}</span>
+            <span>Delivery Fee</span>
+            <span>₦{deliveryFee}</span>
+          </div>
+          <div className="summary-row">
+            <span>Service Fee</span>
+            <span>₦{serviceFee}</span>
           </div>
           <div className="summary-row total">
             <span>Total</span>
-            <span>₦{total.toFixed(0)}</span>
+            <span>₦{total.toLocaleString()}</span>
           </div>
-        </section>
+        </div>
 
-        {state.cart.length > 0 && (
-          <Link to="/checkout" className="checkout-btn">
-            🛒 Checkout - ₦{total.toFixed(0)}
-          </Link>
-        )}
+        <button className="checkout-btn" onClick={handleCheckout}>
+          Proceed to Checkout
+        </button>
+
+        <Link to="/food" className="continue-shopping">
+          ← Continue Shopping
+        </Link>
       </main>
     </div>
   );

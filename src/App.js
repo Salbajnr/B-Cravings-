@@ -1,6 +1,7 @@
+
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AppProvider } from './context/AppContext';
+import { AppContextProvider } from './context/AppContext';
 import HomePage from './components/HomePage';
 import FoodPage from './components/FoodPage';
 import RestaurantPage from './components/RestaurantPage';
@@ -12,7 +13,7 @@ import './index.css';
 
 function App() {
   return (
-    <AppProvider>
+    <AppContextProvider>
       <Router>
         <div className="App">
           <Routes>
@@ -26,7 +27,7 @@ function App() {
           </Routes>
         </div>
       </Router>
-    </AppProvider>
+    </AppContextProvider>
   );
 }
 

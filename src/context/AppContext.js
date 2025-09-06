@@ -1,108 +1,106 @@
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
+
+import React, { createContext, useContext, useReducer } from 'react';
 
 const AppContext = createContext();
 
 const initialState = {
-  user: null,
-  cart: [],
   restaurants: [],
-  currentOrder: null,
+  cart: [],
+  currentUser: null,
   searchQuery: '',
   loading: false,
-  error: null
+  error: null,
+  orders: []
 };
 
-function appReducer(state, action) {
+const appReducer = (state, action) => {
   switch (action.type) {
+    case 'SET_RESTAURANTS':
+      return { ...state, restaurants: action.payload };
+    
     case 'SET_LOADING':
       return { ...state, loading: action.payload };
-
+    
     case 'SET_ERROR':
-      return { ...state, error: action.payload, loading: false };
-
-    case 'SET_RESTAURANTS':
-      return { ...state, restaurants: action.payload, loading: false };
-
+      return { ...state, error: action.payload };
+    
+    case 'SET_SEARCH_QUERY':
+      return { ...state, searchQuery: action.payload };
+    
     case 'ADD_TO_CART':
-      const existingItem = state.cart.find(item => item.id === action.payload.id);
+      const existingItem = state.cart.find(item => 
+        item.id === action.payload.id && item.restaurantId === action.payload.restaurantId
+      );
+      
       if (existingItem) {
         return {
           ...state,
           cart: state.cart.map(item =>
-            item.id === action.payload.id
+            item.id === action.payload.id && item.restaurantId === action.payload.restaurantId
               ? { ...item, quantity: item.quantity + 1 }
               : item
           )
         };
+      } else {
+        return {
+          ...state,
+          cart: [...state.cart, { ...action.payload, quantity: 1 }]
+        };
       }
-      return {
-        ...state,
-        cart: [...state.cart, { ...action.payload, quantity: 1 }]
-      };
-
+    
     case 'REMOVE_FROM_CART':
       return {
         ...state,
-        cart: state.cart.filter(item => item.id !== action.payload)
+        cart: state.cart.filter(item => 
+          !(item.id === action.payload.id && item.restaurantId === action.payload.restaurantId)
+        )
       };
-
-    case 'CLEAR_CART':
-      return { ...state, cart: [] };
-
+    
     case 'UPDATE_CART_QUANTITY':
       return {
         ...state,
         cart: state.cart.map(item =>
-          item.id === action.payload.id
+          item.id === action.payload.id && item.restaurantId === action.payload.restaurantId
             ? { ...item, quantity: action.payload.quantity }
             : item
-        )
+        ).filter(item => item.quantity > 0)
       };
-
+    
+    case 'CLEAR_CART':
+      return { ...state, cart: [] };
+    
+    case 'ADD_ORDER':
+      return {
+        ...state,
+        orders: [...state.orders, action.payload],
+        cart: []
+      };
+    
     case 'SET_USER':
-      return { ...state, user: action.payload };
-
-    case 'SET_SEARCH_QUERY':
-      return { ...state, searchQuery: action.payload };
-
-    case 'SET_CURRENT_ORDER':
-      return { ...state, currentOrder: action.payload };
-
+      return { ...state, currentUser: action.payload };
+    
     default:
       return state;
   }
-}
+};
 
-export const AppProvider = ({ children }) => {
+export const AppContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
 
-  // Load cart from localStorage on app start
-  useEffect(() => {
-    const savedCart = localStorage.getItem('bcravings-cart');
-    if (savedCart) {
-      const cartItems = JSON.parse(savedCart);
-      cartItems.forEach(item => {
-        dispatch({ type: 'ADD_TO_CART', payload: item });
-      });
-    }
-  }, []);
+  const value = {
+    state,
+    dispatch
+  };
 
-  // Save cart to localStorage whenever it changes
-  useEffect(() => {
-    localStorage.setItem('bcravings-cart', JSON.stringify(state.cart));
-  }, [state.cart]);
-
-  return (
-    <AppContext.Provider value={{ state, dispatch }}>
-      {children}
-    </AppContext.Provider>
-  );
+  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
 
 export const useApp = () => {
   const context = useContext(AppContext);
   if (!context) {
-    throw new Error('useApp must be used within AppProvider');
+    throw new Error('useApp must be used within AppContextProvider');
   }
   return context;
 };
+
+export { AppContext };

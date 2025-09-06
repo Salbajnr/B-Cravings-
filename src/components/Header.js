@@ -1,11 +1,12 @@
-
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 
 const Header = ({ isFood = false, isRestaurant = false }) => {
   const navigate = useNavigate();
   const { state } = useApp();
+
+  const cartItemCount = state.cart.reduce((total, item) => total + item.quantity, 0);
 
   return (
     <header className={`header ${isFood ? 'food_header' : ''}`}>
@@ -21,11 +22,11 @@ const Header = ({ isFood = false, isRestaurant = false }) => {
           </h2>
         </Link>
       </div>
-      
+
       <div className="header-actions">
-        {state.cart.length > 0 && (
+        {cartItemCount > 0 && (
           <Link to="/order-summary" className="cart-icon">
-            🛒 <span className="cart-count">{state.cart.length}</span>
+            🛒 <span className="cart-count">{cartItemCount}</span>
           </Link>
         )}
         <Link to="/login" className="login-btn">Login</Link>
