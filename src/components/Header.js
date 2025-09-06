@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 
 const Header = ({ isFood = false, isRestaurant = false }) => {

@@ -4,7 +4,7 @@ modules = ["web", "nodejs-20"]
 channel = "stable-25_05"
 
 [workflows]
-runButton = "Run React App"
+runButton = "Project"
 
 [[workflows.workflow]]
 name = "Run React App"
@@ -15,5 +15,30 @@ mode = "sequential"
 task = "shell.exec"
 args = "npm start"
 
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "B-Cravings App"
+
+[[workflows.workflow]]
+name = "B-Cravings App"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm start"
+waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
 [agent]
 expertMode = true
+
+[[ports]]
+localPort = 5000
+externalPort = 80

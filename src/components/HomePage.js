@@ -4,6 +4,7 @@ import Header from './Header';
 import Footer from './Footer';
 import { AppContext } from '../context/AppContext';
 import { fetchRestaurants } from '../services/apiService';
+import './HomePage.css';
 
 const HomePage = () => {
   const { state, dispatch } = useContext(AppContext);
@@ -46,13 +47,15 @@ const HomePage = () => {
       <Header />
 
       <main>
-        {/* Search Bar */}
+        {/* Hero Section with Search */}
         <div className="search-section">
+          <h1 className="hero-title">Hungry? We've Got You Covered</h1>
+          <p className="hero-subtitle">Discover amazing restaurants and get your favorite food delivered fast in Bauchi</p>
           <div className="search-container">
             <i className="bx bx-search"></i>
             <input
               type="text"
-              placeholder="Search for restaurants, cuisines..."
+              placeholder="Search for restaurants, cuisines, or dishes..."
               value={state.searchQuery}
               onChange={(e) => handleSearch(e.target.value)}
             />
@@ -185,7 +188,7 @@ const HomePage = () => {
           <div className="top_svg">
             <img src="./bcravings-images/cities.svg" alt="" />
           </div>
-          <h1>Top Categories in Kampala</h1>
+          <h1>Top Categories in Bauchi</h1>
           <div className="top_bottons">
             {['Fast food', 'Chicken', 'Snacks', 'Pizza', 'Burgers', 'Local food', 'Indian', 'Grill', 'Healthy', 'Sandwich'].map(category => (
               <button key={category} className="top_btn" onClick={() => handleSearch(category)}>
@@ -232,7 +235,7 @@ const HomePage = () => {
                 Be part of an innovative team that's changing the way people get
                 things done.
               </p>
-              <button className="glovo_together">See careers</button>
+              <button className="bcravings_together">See careers</button>
             </div>
           </div>
         </div>
