@@ -1,7 +1,8 @@
 
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import Header from './Header';
+import './AuthStyles.css';
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -117,8 +118,8 @@ const LoginPage = () => {
           </button>
 
           <div className="login-footer">
-            <p>Don't have an account? <a href="#signup">Sign up</a></p>
-            <p><a href="#forgot">Forgot password?</a></p>
+            <p>Don't have an account? <Link to="/signup" className="auth-link">Sign up</Link></p>
+            <p><a href="#forgot" className="auth-link">Forgot password?</a></p>
           </div>
         </div>
       </main>

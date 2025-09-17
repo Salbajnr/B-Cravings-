@@ -9,6 +9,7 @@ import OrderSummaryPage from './components/OrderSummaryPage';
 import CheckoutPage from './components/CheckoutPage';
 import OrderTrackingPage from './components/OrderTrackingPage';
 import LoginPage from './components/LoginPage';
+import SignUpPage from './components/SignUpPage';
 import './index.css';
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/order-tracking/:orderId" element={<OrderTrackingPage />} />
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignUpPage />} />
           </Routes>
         </div>
       </Router>
