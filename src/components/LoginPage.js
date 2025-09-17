@@ -50,11 +50,11 @@ const LoginPage = () => {
       }));
       
       navigate('/');
+      return; // Prevent state update after navigation
     } catch (error) {
       setErrors({ general: 'Login failed. Please try again.' });
+      setLoading(false);
     }
-    
-    setLoading(false);
   };
 
   const handleGuestLogin = () => {
@@ -72,7 +72,7 @@ const LoginPage = () => {
       <main className="login-content">
         <div className="login-container">
           <div className="login-header">
-            <img src="./bcravings-images/logo_auth.svg" alt="B-Cravings" className="login-logo" />
+            <img src="/bcravings-images/logo_auth.svg" alt="B-Cravings" className="login-logo" />
             <h1>Welcome back</h1>
             <p>Sign in to your account</p>
           </div>

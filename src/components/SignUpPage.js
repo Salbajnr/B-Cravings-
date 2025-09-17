@@ -78,11 +78,11 @@ const SignUpPage = () => {
       // Show success message and redirect
       alert('Account created successfully! Welcome to B-Cravings!');
       navigate('/');
+      return; // Prevent state update after navigation
     } catch (error) {
       setErrors({ general: 'Registration failed. Please try again.' });
+      setLoading(false);
     }
-    
-    setLoading(false);
   };
 
   const handleInputChange = (field, value) => {
@@ -100,7 +100,7 @@ const SignUpPage = () => {
       <main className="auth-content">
         <div className="auth-container">
           <div className="auth-header">
-            <img src="./bcravings-images/logo_auth.svg" alt="B-Cravings" className="auth-logo" />
+            <img src="/bcravings-images/logo_auth.svg" alt="B-Cravings" className="auth-logo" />
             <h1>Join B-Cravings</h1>
             <p>Create your account and start ordering from Bauchi's best restaurants</p>
           </div>
