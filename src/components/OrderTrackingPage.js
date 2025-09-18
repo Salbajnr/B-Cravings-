@@ -1,55 +1,82 @@
 
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { orderService } from '../services/api';
 import Header from './Header';
 
 const OrderTrackingPage = () => {
   const { orderId } = useParams();
-  const [order, setOrder] = useState(null);
+  const navigate = useNavigate();
+  const [orderData, setOrderData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadOrderStatus();
-    const interval = setInterval(loadOrderStatus, 10000); // Update every 10 seconds
+    const fetchOrderData = async () => {
+      try {
+        const data = await orderService.trackOrder(orderId);
+        setOrderData(data);
+      } catch (error) {
+        console.error('Error tracking order:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrderData();
+    
+    // Poll for updates every 30 seconds
+    const interval = setInterval(fetchOrderData, 30000);
     return () => clearInterval(interval);
   }, [orderId]);
-
-  const loadOrderStatus = async () => {
-    try {
-      const orderData = await orderService.trackOrder(orderId);
-      setOrder(orderData);
-    } catch (error) {
-      console.error('Failed to load order:', error);
-    }
-    setLoading(false);
-  };
 
   const getStatusIcon = (status) => {
     switch (status) {
       case 'confirmed': return '✅';
       case 'preparing': return '👨‍🍳';
       case 'on-route': return '🚗';
-      case 'delivered': return '🎉';
-      default: return '📋';
+      case 'delivered': return '📦';
+      default: return '⏳';
     }
   };
 
   const getStatusMessage = (status) => {
     switch (status) {
-      case 'confirmed': return 'Order confirmed! Restaurant is preparing your food.';
-      case 'preparing': return 'Your delicious meal is being prepared with love!';
-      case 'on-route': return 'Driver is on the way to deliver your order!';
-      case 'delivered': return 'Order delivered successfully! Enjoy your meal!';
-      default: return 'Processing your order...';
+      case 'confirmed': return 'Order Confirmed';
+      case 'preparing': return 'Preparing Your Order';
+      case 'on-route': return 'On the Way';
+      case 'delivered': return 'Delivered';
+      default: return 'Processing Order';
     }
+  };
+
+  const timelineSteps = [
+    { key: 'confirmed', label: 'Order Confirmed', icon: '✅' },
+    { key: 'preparing', label: 'Preparing', icon: '👨‍🍳' },
+    { key: 'on-route', label: 'On the Way', icon: '🚗' },
+    { key: 'delivered', label: 'Delivered', icon: '📦' }
+  ];
+
+  const getStepStatus = (step) => {
+    const statusOrder = ['confirmed', 'preparing', 'on-route', 'delivered'];
+    const currentIndex = statusOrder.indexOf(orderData?.status);
+    const stepIndex = statusOrder.indexOf(step);
+    return stepIndex <= currentIndex;
   };
 
   if (loading) {
     return (
       <div className="order-tracking-page">
         <Header />
-        <div className="loading-spinner">Loading order status...</div>
+        <div className="loading-spinner">Loading order details...</div>
+      </div>
+    );
+  }
+
+  if (!orderData) {
+    return (
+      <div className="order-tracking-page">
+        <Header />
+        <div className="error-message">Order not found</div>
       </div>
     );
   }
@@ -60,53 +87,91 @@ const OrderTrackingPage = () => {
       
       <main className="tracking-content">
         <div className="tracking-header">
-          <h1>Order Tracking</h1>
-          <p>Order #{orderId}</p>
+          <h1>Order #{orderId}</h1>
+          <p>Track your order in real-time</p>
         </div>
 
+        {/* Current Status */}
         <div className="status-card">
           <div className="status-icon">
-            {getStatusIcon(order?.status)}
+            {getStatusIcon(orderData.status)}
           </div>
-          <h2>{getStatusMessage(order?.status)}</h2>
-          {order?.estimatedDelivery && (
-            <p>Estimated delivery: {new Date(order.estimatedDelivery).toLocaleTimeString()}</p>
-          )}
+          <h2>{getStatusMessage(orderData.status)}</h2>
+          <p>
+            {orderData.status === 'delivered' 
+              ? 'Your order has been delivered!' 
+              : `Estimated delivery: ${new Date(orderData.estimatedDelivery).toLocaleTimeString()}`
+            }
+          </p>
         </div>
 
+        {/* Progress Timeline */}
         <div className="progress-timeline">
-          <div className={`timeline-step ${['confirmed', 'preparing', 'on-route', 'delivered'].includes(order?.status) ? 'completed' : ''}`}>
-            <div className="step-icon">✅</div>
-            <div className="step-text">Order Confirmed</div>
-          </div>
-          <div className={`timeline-step ${['preparing', 'on-route', 'delivered'].includes(order?.status) ? 'completed' : ''}`}>
-            <div className="step-icon">👨‍🍳</div>
-            <div className="step-text">Preparing</div>
-          </div>
-          <div className={`timeline-step ${['on-route', 'delivered'].includes(order?.status) ? 'completed' : ''}`}>
-            <div className="step-icon">🚗</div>
-            <div className="step-text">On Route</div>
-          </div>
-          <div className={`timeline-step ${order?.status === 'delivered' ? 'completed' : ''}`}>
-            <div className="step-icon">🎉</div>
-            <div className="step-text">Delivered</div>
-          </div>
+          {timelineSteps.map(step => (
+            <div 
+              key={step.key}
+              className={`timeline-step ${getStepStatus(step.key) ? 'completed' : ''}`}
+            >
+              <div className="step-icon">{step.icon}</div>
+              <span className="step-text">{step.label}</span>
+            </div>
+          ))}
         </div>
 
-        {order?.driverLocation && order?.status === 'on-route' && (
+        {/* Driver Info (when on-route) */}
+        {orderData.status === 'on-route' && (
           <div className="driver-info">
-            <h3>🚗 Driver Location</h3>
-            <p>Your driver is nearby and will arrive shortly!</p>
+            <h3>Your Delivery Partner</h3>
+            <p>Your order is on the way! Our delivery partner will be there soon.</p>
             <div className="map-placeholder">
-              <p>📍 Live tracking map would be here</p>
-              <small>Lat: {order.driverLocation.lat}, Lng: {order.driverLocation.lng}</small>
+              <p>🗺️ Live Tracking</p>
+              <small>Map integration coming soon</small>
             </div>
           </div>
         )}
 
+        {/* Order Details */}
         <div className="order-details">
-          <h3>Order Summary</h3>
-          <p>Total: ₦{order?.total?.toFixed(0) || '0'}</p>
+          <h3>Order Details</h3>
+          <div className="summary-item">
+            <span>Order Total</span>
+            <span>₦{orderData.total?.toLocaleString() || '0'}</span>
+          </div>
+          <div className="summary-item">
+            <span>Order Time</span>
+            <span>{new Date(orderData.createdAt || Date.now()).toLocaleString()}</span>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div style={{ marginTop: '2rem', textAlign: 'center' }}>
+          <button 
+            onClick={() => navigate('/food')}
+            style={{
+              padding: '0.75rem 1.5rem',
+              background: '#00a082',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              marginRight: '1rem'
+            }}
+          >
+            Order Again
+          </button>
+          <button 
+            onClick={() => navigate('/')}
+            style={{
+              padding: '0.75rem 1.5rem',
+              background: '#f0f0f0',
+              color: '#333',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer'
+            }}
+          >
+            Back to Home
+          </button>
         </div>
       </main>
     </div>

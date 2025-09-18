@@ -43,6 +43,32 @@ const mockRestaurants = [
     location: "Dass Road",
     description: "Traditional Hausa and Nigerian delicacies",
     isOpen: true
+  },
+  {
+    id: 4,
+    name: "Fast Bites",
+    cuisine: "Fast food",
+    rating: 4.1,
+    totalRatings: 124,
+    deliveryTime: "15-25 min",
+    deliveryFee: "₦100",
+    image: "/bcravings-images/1c9d6cf772853d23d56fdc1265ea60c7aa89b46b668b023a834ba00e886d.jpeg",
+    location: "GRA",
+    description: "Quick bites and fast food favorites",
+    isOpen: true
+  },
+  {
+    id: 5,
+    name: "Pizza Corner",
+    cuisine: "Pizza",
+    rating: 4.4,
+    totalRatings: 98,
+    deliveryTime: "30-40 min",
+    deliveryFee: "₦300",
+    image: "/bcravings-images/20a50a07b9ccab420354c8515f43858f27a4cb87419e2e66e9c7ab71a244.jpeg",
+    location: "Market Road",
+    description: "Authentic wood-fired pizzas",
+    isOpen: true
   }
 ];
 
@@ -124,15 +150,67 @@ const mockMenuItems = {
       description: "Traditional baobab leaf soup",
       image: "/bcravings-images/20a50a07b9ccab420354c8515f43858f27a4cb87419e2e66e9c7ab71a244.jpeg"
     }
+  ],
+  4: [
+    { 
+      id: 10, 
+      name: "Burger & Fries", 
+      price: 2200, 
+      category: "Fast food", 
+      description: "Juicy beef burger with crispy fries",
+      image: "/bcravings-images/3941fe88ea36c1123ad291c21f32afe6a8794e893cea62a6f588458643bd.jpeg"
+    },
+    { 
+      id: 11, 
+      name: "Chicken Wings", 
+      price: 1800, 
+      category: "Fast food", 
+      description: "Spicy chicken wings with sauce",
+      image: "/bcravings-images/c9efcd63fa9333697bfeadd414184667f1056e0b0e82ba64c8feb6ea2b8a.jpeg"
+    }
+  ],
+  5: [
+    { 
+      id: 12, 
+      name: "Margherita Pizza", 
+      price: 3500, 
+      category: "Pizza", 
+      description: "Classic pizza with tomato, mozzarella, and basil",
+      image: "/bcravings-images/20a50a07b9ccab420354c8515f43858f27a4cb87419e2e66e9c7ab71a244.jpeg"
+    },
+    { 
+      id: 13, 
+      name: "Pepperoni Pizza", 
+      price: 4000, 
+      category: "Pizza", 
+      description: "Pizza topped with pepperoni and cheese",
+      image: "/bcravings-images/1c9d6cf772853d23d56fdc1265ea60c7aa89b46b668b023a834ba00e886d.jpeg"
+    }
   ]
 };
 
 export const restaurantService = {
-  getRestaurants: async () => {
+  getRestaurants: async (searchQuery = '', category = '') => {
     try {
-      // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 800));
-      return mockRestaurants;
+      let filtered = [...mockRestaurants];
+
+      if (searchQuery.trim()) {
+        filtered = filtered.filter(restaurant =>
+          restaurant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          restaurant.cuisine.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          restaurant.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          restaurant.description.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+      }
+
+      if (category && category !== 'All') {
+        filtered = filtered.filter(restaurant => 
+          restaurant.cuisine.toLowerCase() === category.toLowerCase()
+        );
+      }
+
+      return filtered;
     } catch (error) {
       console.error('Error fetching restaurants:', error);
       return mockRestaurants;
@@ -197,28 +275,21 @@ export const orderService = {
     try {
       await new Promise(resolve => setTimeout(resolve, 500));
       
-      // Simulate progressive status based on time
       const orderTime = parseInt(orderId.replace('BCR', ''));
       const timeDiff = Date.now() - orderTime;
       const minutesElapsed = Math.floor(timeDiff / 60000);
       
       let status = 'confirmed';
-      if (minutesElapsed > 10) status = 'preparing';
-      if (minutesElapsed > 20) status = 'on-route';
-      if (minutesElapsed > 35) status = 'delivered';
+      if (minutesElapsed > 5) status = 'preparing';
+      if (minutesElapsed > 15) status = 'on-route';
+      if (minutesElapsed > 30) status = 'delivered';
       
       return {
         id: orderId,
         status: status,
         estimatedDelivery: new Date(Date.now() + Math.max(0, 35 - minutesElapsed) * 60000).toISOString(),
-        driverLocation: status === 'on-route' ? { lat: 10.3158 + Math.random() * 0.01, lng: 9.8442 + Math.random() * 0.01 } : null,
         total: 3500,
-        updates: [
-          { time: new Date(orderTime).toISOString(), message: "Order confirmed" },
-          { time: new Date(orderTime + 10 * 60000).toISOString(), message: "Restaurant is preparing your order" },
-          ...(minutesElapsed > 20 ? [{ time: new Date(orderTime + 20 * 60000).toISOString(), message: "Order is on the way" }] : []),
-          ...(minutesElapsed > 35 ? [{ time: new Date(orderTime + 35 * 60000).toISOString(), message: "Order delivered" }] : [])
-        ]
+        createdAt: new Date(orderTime).toISOString()
       };
     } catch (error) {
       console.error('Error tracking order:', error);
@@ -228,8 +299,8 @@ export const orderService = {
 };
 
 // Legacy function for backward compatibility
-export const fetchRestaurants = async () => {
-  return await restaurantService.getRestaurants();
+export const fetchRestaurants = async (searchQuery = '', category = '') => {
+  return await restaurantService.getRestaurants(searchQuery, category);
 };
 
 export default { restaurantService, orderService };
