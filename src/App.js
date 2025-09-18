@@ -22,6 +22,7 @@ function App() {
             <Route path="/food" element={<FoodPage />} />
             <Route path="/restaurant/:id" element={<RestaurantPage />} />
             <Route path="/cart" element={<OrderSummaryPage />} />
+            <Route path="/order-summary" element={<OrderSummaryPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/order-tracking/:orderId" element={<OrderTrackingPage />} />
             <Route path="/login" element={<LoginPage />} />

@@ -227,4 +227,9 @@ export const orderService = {
   }
 };
 
+// Legacy function for backward compatibility
+export const fetchRestaurants = async () => {
+  return await restaurantService.getRestaurants();
+};
+
 export default { restaurantService, orderService };

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
 import { AppContext } from '../context/AppContext';
-import { fetchRestaurants } from '../services/apiService';
+import { fetchRestaurants } from '../services/api';
 import './HomePage.css';
 
 const HomePage = () => {

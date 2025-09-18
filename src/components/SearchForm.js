@@ -60,3 +60,48 @@ const SearchForm = ({ onResults, placeholder = "Search restaurants, dishes..." }
 };
 
 export default SearchForm;
+import React, { useState } from 'react';
+
+const SearchForm = ({ onSearch, placeholder = "Search..." }) => {
+  const [query, setQuery] = useState('');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSearch(query);
+  };
+
+  const handleChange = (e) => {
+    const value = e.target.value;
+    setQuery(value);
+    onSearch(value);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="search-form">
+      <div className="search-input-container">
+        <i className="bx bx-search search-icon"></i>
+        <input
+          type="text"
+          value={query}
+          onChange={handleChange}
+          placeholder={placeholder}
+          className="search-input"
+        />
+        {query && (
+          <button 
+            type="button" 
+            onClick={() => {
+              setQuery('');
+              onSearch('');
+            }}
+            className="clear-search"
+          >
+            <i className="bx bx-x"></i>
+          </button>
+        )}
+      </div>
+    </form>
+  );
+};
+
+export default SearchForm;
