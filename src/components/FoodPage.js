@@ -1,16 +1,18 @@
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useApp } from '../context/AppContext';
 import Header from './Header';
 import StoreCard from './StoreCard';
 import SearchForm from './SearchForm';
 
 const FoodPage = () => {
+  const { state, dispatch } = useApp();
   const [restaurants, setRestaurants] = useState([]);
   const [filteredRestaurants, setFilteredRestaurants] = useState([]);
-  const [activeFilter, setActiveFilter] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('All');
   const [loading, setLoading] = useState(true);
+  const [sortBy, setSortBy] = useState('rating');
 
   const categories = [
     { name: "All", icon: "🔍" },
@@ -28,12 +30,12 @@ const FoodPage = () => {
 
   useEffect(() => {
     filterRestaurants();
-  }, [activeFilter, searchQuery, restaurants]);
+  }, [restaurants, searchQuery, selectedCategory, sortBy]);
 
   const loadRestaurants = async () => {
     try {
       const response = await axios.get('https://jsonplaceholder.typicode.com/users');
-      
+
       const restaurantData = response.data.map(user => ({
         id: user.id,
         name: user.company.name + ' Kitchen',
@@ -44,7 +46,7 @@ const FoodPage = () => {
         deliveryFee: `₦${(Math.random() * 1000 + 500).toFixed(0)}`,
         isPromoted: Math.random() > 0.7
       }));
-      
+
       setRestaurants(restaurantData);
     } catch (error) {
       console.error('Failed to load restaurants:', error);
@@ -79,18 +81,38 @@ const FoodPage = () => {
   const filterRestaurants = () => {
     let filtered = restaurants;
 
-    if (activeFilter !== 'All') {
-      filtered = filtered.filter(restaurant => 
-        restaurant.cuisine.toLowerCase().includes(activeFilter.toLowerCase())
-      );
-    }
-
+    // Filter by search query
     if (searchQuery.trim()) {
       filtered = filtered.filter(restaurant =>
         restaurant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        restaurant.cuisine.toLowerCase().includes(searchQuery.toLowerCase())
+        restaurant.cuisine.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        restaurant.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        restaurant.description.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
+
+    // Filter by category
+    if (selectedCategory !== 'All') {
+      filtered = filtered.filter(restaurant => 
+        restaurant.cuisine.toLowerCase() === selectedCategory.toLowerCase()
+      );
+    }
+
+    // Sort restaurants
+    filtered.sort((a, b) => {
+      switch (sortBy) {
+        case 'rating':
+          return b.rating - a.rating;
+        case 'delivery-time':
+          return parseInt(a.deliveryTime) - parseInt(b.deliveryTime);
+        case 'delivery-fee':
+          return parseInt(a.deliveryFee.replace('₦', '')) - parseInt(b.deliveryFee.replace('₦', ''));
+        case 'name':
+          return a.name.localeCompare(b.name);
+        default:
+          return 0;
+      }
+    });
 
     setFilteredRestaurants(filtered);
   };
@@ -111,17 +133,36 @@ const FoodPage = () => {
   return (
     <div className="food-page">
       <Header />
-      
+
       <div className="search-section">
         <SearchForm onSearch={handleSearch} placeholder="What can we get you?" />
-      </div>
+
+          <div className="sort-controls">
+            <label>Sort by: </label>
+            <select 
+              value={sortBy} 
+              onChange={(e) => setSortBy(e.target.value)}
+              style={{
+                padding: '8px 12px',
+                border: '1px solid #e1e5e9',
+                borderRadius: '6px',
+                background: 'white'
+              }}
+            >
+              <option value="rating">Rating</option>
+              <option value="delivery-time">Delivery Time</option>
+              <option value="delivery-fee">Delivery Fee</option>
+              <option value="name">Name</option>
+            </select>
+          </div>
+        </div>
 
       <div className="food-categories">
         {categories.map(category => (
           <button
             key={category.name}
-            className={`category-btn ${activeFilter === category.name ? 'active' : ''}`}
-            onClick={() => setActiveFilter(category.name)}
+            className={`category-btn ${selectedCategory === category.name ? 'active' : ''}`}
+            onClick={() => setSelectedCategory(category.name)}
           >
             <span className="category-icon">{category.icon}</span>
             <span>{category.name}</span>

@@ -1,8 +1,8 @@
 
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import Header from './Header';
 import { useApp } from '../context/AppContext';
+import Header from './Header';
 
 const OrderSummaryPage = () => {
   const { state, dispatch } = useApp();
@@ -64,15 +64,12 @@ const OrderSummaryPage = () => {
         <h1>Order Summary</h1>
         
         <div className="cart-items">
-          {state.cart.map(item => (
-            <div key={`${item.id}-${item.restaurantId}`} className="cart-item">
+          {state.cart.map((item, index) => (
+            <div key={`${item.id}-${item.restaurantId}-${index}`} className="cart-item">
               <div className="item-info">
-                <img src={item.image} alt={item.name} className="item-image" />
-                <div>
-                  <h3>{item.name}</h3>
-                  <p className="item-description">{item.description}</p>
-                  <span className="item-price">₦{item.price}</span>
-                </div>
+                <h3>{item.name}</h3>
+                <p className="item-price">₦{item.price.toLocaleString()}</p>
+                <small>From {item.restaurantName || 'Restaurant'}</small>
               </div>
               
               <div className="quantity-controls">
@@ -80,19 +77,18 @@ const OrderSummaryPage = () => {
                   onClick={() => updateQuantity(item.id, item.restaurantId, item.quantity - 1)}
                   disabled={item.quantity <= 1}
                 >
-                  -
+                  −
                 </button>
-                <span className="quantity">{item.quantity}</span>
-                <button 
-                  onClick={() => updateQuantity(item.id, item.restaurantId, item.quantity + 1)}
-                >
+                <span>{item.quantity}</span>
+                <button onClick={() => updateQuantity(item.id, item.restaurantId, item.quantity + 1)}>
                   +
                 </button>
                 <button 
                   className="remove-btn"
                   onClick={() => removeItem(item.id, item.restaurantId)}
+                  title="Remove item"
                 >
-                  🗑️
+                  ×
                 </button>
               </div>
             </div>

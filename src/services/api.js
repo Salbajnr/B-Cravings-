@@ -196,17 +196,28 @@ export const orderService = {
   trackOrder: async (orderId) => {
     try {
       await new Promise(resolve => setTimeout(resolve, 500));
-      const statuses = ['confirmed', 'preparing', 'on_way', 'delivered'];
-      const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
+      
+      // Simulate progressive status based on time
+      const orderTime = parseInt(orderId.replace('BCR', ''));
+      const timeDiff = Date.now() - orderTime;
+      const minutesElapsed = Math.floor(timeDiff / 60000);
+      
+      let status = 'confirmed';
+      if (minutesElapsed > 10) status = 'preparing';
+      if (minutesElapsed > 20) status = 'on-route';
+      if (minutesElapsed > 35) status = 'delivered';
       
       return {
         id: orderId,
-        status: randomStatus,
-        estimatedDelivery: new Date(Date.now() + 25 * 60000).toISOString(),
-        driverLocation: { lat: 10.3158, lng: 9.8442 },
+        status: status,
+        estimatedDelivery: new Date(Date.now() + Math.max(0, 35 - minutesElapsed) * 60000).toISOString(),
+        driverLocation: status === 'on-route' ? { lat: 10.3158 + Math.random() * 0.01, lng: 9.8442 + Math.random() * 0.01 } : null,
+        total: 3500,
         updates: [
-          { time: new Date(Date.now() - 10 * 60000).toISOString(), message: "Order confirmed" },
-          { time: new Date(Date.now() - 5 * 60000).toISOString(), message: "Restaurant is preparing your order" }
+          { time: new Date(orderTime).toISOString(), message: "Order confirmed" },
+          { time: new Date(orderTime + 10 * 60000).toISOString(), message: "Restaurant is preparing your order" },
+          ...(minutesElapsed > 20 ? [{ time: new Date(orderTime + 20 * 60000).toISOString(), message: "Order is on the way" }] : []),
+          ...(minutesElapsed > 35 ? [{ time: new Date(orderTime + 35 * 60000).toISOString(), message: "Order delivered" }] : [])
         ]
       };
     } catch (error) {

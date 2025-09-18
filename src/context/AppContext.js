@@ -79,6 +79,9 @@ const appReducer = (state, action) => {
     case 'SET_USER':
       return { ...state, currentUser: action.payload };
     
+    case 'SET_CURRENT_ORDER':
+      return { ...state, currentOrder: action.payload };
+    
     default:
       return state;
   }
